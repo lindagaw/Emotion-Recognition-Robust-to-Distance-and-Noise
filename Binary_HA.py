@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[18]:
-
-
 import random
 import time
 import datetime
@@ -65,39 +59,24 @@ from keras.layers import Activation
 from keras.utils import np_utils
 from keras.utils import to_categorical
 
+from colorama import Fore, Back, Style
+
 from IPython.display import clear_output
 
 import warnings
+
 warnings.filterwarnings('ignore')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-sample_rate=44100
+sample_rate = 44100
 frame_number = 48
-hop_length = 441  # frame size= 2*hop
-segment_length=int(sample_rate*0.2)  #0.2
-segment_pad=int(sample_rate*0.02)     #0.02
-overlapping=int(sample_rate*0.1)   #0.1
+hop_length = 441  # frame size= 2 * hop
+segment_length = int(sample_rate * 0.2)  #0.2
+segment_pad = int(sample_rate * 0.02)     #0.02
+overlapping = int(sample_rate * 0.1)   #0.1
 fillength = 4  # 6  filer size
 classes = 2
-NumofFeaturetoUse = 272  # this will re-assigned for different classifiers
-
-'''
-NumofFeaturetoUse = 272 # this will re-assigned for different classifiers
-frame_number = 48
-n_neurons = 56
-n_batch = 128     # eta 100 silo prothom tay  classifier 0
-n_epoch = 50
-nbindex = 96    # number of filters in CNN
-fillength = 4  # 6  filer size
-classes = 2
-dropout = 0.2
-dense_layers = 1
-NumofFeaturetoUse = 272 #int(sys.argv[1])
-optimizers = optimizers.Adam(
-    lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-'''
-
-from colorama import Fore, Back, Style
+NumofFeaturetoUse = 272  # int(sys.argv[1])
 
 print('Please specify the' + Fore.YELLOW + ' number of classes ' + Style.RESET_ALL + 'in your training:')
 classes = input()
@@ -126,7 +105,7 @@ n_batch = input()
 print('Please specify the number of epoches during training.')
 n_epoch = input()
 # In[2]:
-'''
+
 
 def update_progress(progress):
     bar_length = 100
@@ -191,8 +170,6 @@ a_label_vector_test[a_label_vector_test == 3] = 1
 
 
 # In[6]:
-
-
 h_label_vector = to_categorical(h_label_vector, num_classes=2)
 a_label_vector = to_categorical(a_label_vector, num_classes=2)
 
@@ -297,13 +274,7 @@ def record(str_message, log_file):
     file.write(str_message)
     file.close()
 
-n_neurons = 1024
-n_batch = 128     # eta 100 silo prothom tay  classifier 0
-n_epoch = 1000
-nbindex = 512    # number of filters in CNN
-fillength = 4 #6  filer size
 # In[15]:
-
 
 def conv_network_model_opt(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes, dense_layers):
 
@@ -333,7 +304,7 @@ def conv_network_model_opt(title, num_layers, n_neurons, n_batch, nbindex, dropo
 
     model.add(Dense(classes, activation='softmax'))
 
-    model.compile(loss='binary_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
+    model.compile(loss='binary_crossentropy', optimizer = adam, metrics=['accuracy'])
     
     model.summary()
 
@@ -387,26 +358,18 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
 # In[17]:
 
 
-n_neurons = 56
-n_batch = 128     # eta 100 silo prothom tay  classifier 0
-n_epoch = 50
-nbindex = 96    # number of filters in CNN
-fillength = 4 #6  filer size
-classes = 2
-dropout = 0.2
-dense_layers = 1
-
+# n_neurons = 56
 this_title = 'H_A_neurons_' + str(n_neurons) + '_batches_' + str(n_batch) + '_filters_' + str(nbindex) + '_dropout_' + str(dropout) + '_kerSize_' + str(fillength) + '_dense_' + str(dense_layers)
 print(this_title)
 
-#conv_network_model_opt(this_title, num_layers=2, n_neurons=n_neurons, n_batch=n_batch, nbindex=nbindex, dropout=dropout, classes=classes, dense_layers=dense_layers)
+conv_network_model_opt(this_title, num_layers=3, n_neurons=n_neurons, n_batch=n_batch, nbindex=nbindex, dropout=dropout, classes=classes, dense_layers=dense_layers)
 
 
 # In[19]:
 
 
 ahfilepath = "2_Layer(s)//" + this_title + '.hdf5'
-ahmodel = create_cnn(this_title, num_layers=2, n_neurons=n_neurons, n_batch=n_batch, nbindex=nbindex, dropout=dropout, classes=classes, dense_layers=dense_layers)
+ahmodel = create_cnn(this_title, num_layers=3, n_neurons=n_neurons, n_batch=n_batch, nbindex=nbindex, dropout=dropout, classes=classes, dense_layers=dense_layers)
 ahmodel.load_weights(ahfilepath)
 
 y_pred = []
@@ -433,7 +396,3 @@ for item in list(ahmodel.predict(featureSet_val)):
 
 
 print(accuracy_score(y_true, y_pred))
-
-
-# In[ ]:
-'''
