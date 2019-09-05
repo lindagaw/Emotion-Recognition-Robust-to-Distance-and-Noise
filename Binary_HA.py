@@ -82,15 +82,15 @@ NumofFeaturetoUse = 272  # int(sys.argv[1])
 
 
 classes = 2
-NumofFeaturetoUse = 272
+NumofFeaturetoUse = 100
 n_neurons = 1024
 dense_layers = 1
 num_layers = 4
 fillength = 2
-nbindex = 256
+nbindex = 128
 dropout = 2
 n_batch = 256
-n_epoch = 500
+n_epoch = 300
 # In[2]:
 
 
@@ -198,18 +198,24 @@ eval_data = float_compatible((featureSet_testing).astype(np.float32))
 
 
 rmsprop = optimizers.RMSprop(lr=0.0001, rho=0.9, epsilon=None, decay=0.0)
-adam = optimizers.Adam(lr=5e-6, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+adam = optimizers.Adam(lr=5e-6, beta_1=0.9, beta_2=0.999,
+                       epsilon=None, decay=5e-6, amsgrad=False)
 sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 adagrad = optimizers.Adagrad(lr=0.01, epsilon=None, decay=0.0)
 adadelta = optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=None, decay=0.0)
 adamax = optimizers.Adamax(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0)
 nadam = optimizers.Nadam(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, schedule_decay=0.004)
 
+'''
+
 
 # In[11]:
 
 featureSet = train_data
 Label = label_training
+
+featureSet = np.split(featureSet, np.array(
+    [NumofFeaturetoUse]), axis=2)[0]
 
 print('training data: ' + str(featureSet.shape))
 print('training label: ' + str(Label.shape))
@@ -220,19 +226,12 @@ print('training label: ' + str(Label.shape))
 featureSet_val = eval_data
 Label_val = label_testing
 
+featureSet_val = np.split(featureSet_val, np.array(
+    [NumofFeaturetoUse]), axis=2)[0]
+
 print('evaluation data: ' + str(featureSet_val.shape))
 print('evaluation label: ' + str(Label_val.shape))
 
-
-# In[13]:
-
-# Load training npy files
-featureSet_training = np.vstack((h_feature_vector, a_feature_vector))
-label_training = np.vstack((h_label_vector, a_label_vector))
-
-# Load testing npy files
-featureSet_testing = np.vstack((h_feature_vector_test, a_feature_vector_test))
-label_testing = np.vstack((h_label_vector_test, a_label_vector_test))
 
 
 # In[14]:
@@ -250,25 +249,25 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
 
     model.add(Convolution1D(nb_filter=nbindex, filter_length=fillength,
                             input_shape=(featureSet.shape[1], featureSet.shape[2]), kernel_constraint=maxnorm(3)))
-    model.add(LeakyReLU(alpha=0.05))
+    model.add(LeakyReLU(alpha=0.005))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
     model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))
-    model.add(LeakyReLU(alpha=0.05))
+    model.add(LeakyReLU(alpha=0.005))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
     model.add(Convolution1D(nb_filter=nbindex*3, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))
-    model.add(LeakyReLU(alpha=0.05))
+    model.add(LeakyReLU(alpha=0.005))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
     model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))  
-    model.add(LeakyReLU(alpha=0.05))
+    model.add(LeakyReLU(alpha=0.005))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
@@ -287,10 +286,10 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
 #title = 'H_A_neurons_' + str(n_neurons) + '_batches_' + str(n_batch) + '_filters_' + str(
 #    nbindex) + '_dropout_' + str(dropout) + '_kerSize_' + str(fillength) + '_dense_' + str(dense_layers)
 
-title = 'All_CNN'
-filepath = str(num_layers) + "_Layer(s)//Checkpoint_" + title + ".hdf5"
-model = load_model(filepath)
-'''
+title = 'All_CNN_ChangedLeaky'
+#filepath = str(num_layers) + "_Layer(s)//Checkpoint_" + title + ".hdf5"
+#model = load_model(filepath)
+
 save_to_path = str(num_layers) + '_Layer(s)//'
 
 if not os.path.exists(save_to_path):
@@ -314,7 +313,7 @@ model.fit(X, Y, nb_epoch=n_epoch, batch_size=n_batch,  callbacks=callbacks_list,
 model.save_weights(str(num_layers) + "_Layer(s)//" + title + ".hdf5")
 
 model.load_weights(filepath)
-'''
+
 y_pred = []
 y_true = []
 
