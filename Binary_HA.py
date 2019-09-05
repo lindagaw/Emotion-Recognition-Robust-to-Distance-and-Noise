@@ -82,7 +82,7 @@ NumofFeaturetoUse = 272  # int(sys.argv[1])
 
 classes = 2
 NumofFeaturetoUse = 100
-n_neurons = 512
+n_neurons = 1024
 dense_layers = 1
 num_layers = 3
 fillength = 2
@@ -283,7 +283,7 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
 #    nbindex) + '_dropout_' + str(dropout) + '_kerSize_' + str(fillength) + '_dense_' + str(dense_layers)
 
 title = 'All_CNN_ChangedLeaky'
-#filepath = str(num_layers) + "_Layer(s)//Checkpoint_" + title + ".hdf5"
+filepath = str(num_layers) + "_Layer(s)//Checkpoint_" + title + ".hdf5"
 #model = load_model(filepath)
 
 save_to_path = str(num_layers) + '_Layer(s)//'
@@ -291,7 +291,7 @@ save_to_path = str(num_layers) + '_Layer(s)//'
 if not os.path.exists(save_to_path):
     os.mkdir(save_to_path)
 
-X, X_test, Y, Y_test= model_selection.train_test_split(featureSet, Label, test_size=0.25, shuffle=True)
+X, X_test, Y, Y_test= model_selection.train_test_split(featureSet, Label, test_size=0.10, shuffle=True)
 
 model = create_cnn(title, num_layers, n_neurons, n_batch,
             nbindex, dropout, classes, dense_layers)
