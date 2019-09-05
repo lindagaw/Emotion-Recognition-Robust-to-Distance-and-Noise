@@ -28,7 +28,6 @@ from sklearn.cluster import KMeans
 from sklearn.svm import SVC
 from sklearn.metrics import f1_score
 from sklearn import mixture
-from sklearn.model_selection import train_test_split
 from sklearn.utils import class_weight
 from sklearn.impute import SimpleImputer
 import pickle
@@ -83,14 +82,14 @@ NumofFeaturetoUse = 272  # int(sys.argv[1])
 
 classes = 2
 NumofFeaturetoUse = 100
-n_neurons = 1024
+n_neurons = 512
 dense_layers = 1
-num_layers = 4
+num_layers = 3
 fillength = 2
-nbindex = 128
-dropout = 2
+nbindex = 256
+dropout = 0.1
 n_batch = 256
-n_epoch = 300
+n_epoch = 500
 # In[2]:
 
 
@@ -196,17 +195,14 @@ eval_data = float_compatible((featureSet_testing).astype(np.float32))
 
 # In[10]:
 
-
 rmsprop = optimizers.RMSprop(lr=0.0001, rho=0.9, epsilon=None, decay=0.0)
-adam = optimizers.Adam(lr=5e-6, beta_1=0.9, beta_2=0.999,
-                       epsilon=None, decay=5e-6, amsgrad=False)
+adam = optimizers.Adam(lr=5e-5, beta_1=0.9, beta_2=0.999,
+                       epsilon=None, decay=0, amsgrad=True)
 sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 adagrad = optimizers.Adagrad(lr=0.01, epsilon=None, decay=0.0)
 adadelta = optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=None, decay=0.0)
 adamax = optimizers.Adamax(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0)
 nadam = optimizers.Nadam(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, schedule_decay=0.004)
-
-'''
 
 
 # In[11]:
@@ -249,25 +245,25 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
 
     model.add(Convolution1D(nb_filter=nbindex, filter_length=fillength,
                             input_shape=(featureSet.shape[1], featureSet.shape[2]), kernel_constraint=maxnorm(3)))
-    model.add(LeakyReLU(alpha=0.005))
+    model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
     model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))
-    model.add(LeakyReLU(alpha=0.005))
+    model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
     model.add(Convolution1D(nb_filter=nbindex*3, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))
-    model.add(LeakyReLU(alpha=0.005))
+    model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
     model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))  
-    model.add(LeakyReLU(alpha=0.005))
+    model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
@@ -295,7 +291,7 @@ save_to_path = str(num_layers) + '_Layer(s)//'
 if not os.path.exists(save_to_path):
     os.mkdir(save_to_path)
 
-X, X_test, Y, Y_test= train_test_split(featureSet, Label, test_size=0.25, shuffle=True)
+X, X_test, Y, Y_test= model_selection.train_test_split(featureSet, Label, test_size=0.25, shuffle=True)
 
 model = create_cnn(title, num_layers, n_neurons, n_batch,
             nbindex, dropout, classes, dense_layers)
