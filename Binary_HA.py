@@ -58,6 +58,7 @@ from keras.callbacks import EarlyStopping
 from keras.layers import Activation
 from keras.utils import np_utils
 from keras.utils import to_categorical
+from keras.layers import LeakyReLU
 
 from colorama import Fore, Back, Style
 
@@ -78,32 +79,17 @@ fillength = 4  # 6  filer size
 classes = 2
 NumofFeaturetoUse = 272  # int(sys.argv[1])
 
-print('Please specify the' + Fore.YELLOW + ' number of classes ' + Style.RESET_ALL + 'in your training:')
-classes = input()
 
-print('Please specify the number of most significant features to use:')
-NumofFeaturetoUse = input()
-
-print('Please specify the number of neurons in the dense layer(s).')
-n_neurons = input()
-
-print('Please specify the number of dense layer(s).')
-dense_layers = input()
-
-print('Please specify the size of a kernal in each conv layer.')
-fillength = input()
-
-print('Please specify the number of kernals in each conv layer.')
-nbindex = input()
-
-print('Please specify the dropout parameter in applicable layers.')
-dropout = input()
-
-print('Please specify the size of each batch during training.')
-n_batch = input()
-
-print('Please specify the number of epoches during training.')
-n_epoch = input()
+classes = 2
+NumofFeaturetoUse = 272
+n_neurons = 96
+dense_layers = 0
+num_layers = 4
+fillength = 2
+nbindex = 128
+dropout = 0.2
+n_batch = 256
+n_epoch = 200
 # In[2]:
 
 
@@ -123,12 +109,6 @@ def update_progress(progress):
     
     text = "Progress: [{0}] {1:.1f}%".format( "#" * block + "-" * (bar_length - block), progress * 100)
     print(text)
-
-
-# # Specify Feature Vectors
-
-# In[3]:
-
 
 h_feature_vector = np.load('Features//h_feature_vector_48.npy')
 h_label_vector = np.load('Features//h_label_vector_48.npy')
@@ -154,19 +134,11 @@ n_label_vector_test = np.load('Features//n_label_vector_test_48.npy')
 s_feature_vector_test = np.load('Features//s_feature_vector_test_48.npy')
 s_label_vector_test = np.load('Features//s_label_vector_test_48.npy')
 
+h_label_vector[h_label_vector == 0] = 0
+a_label_vector[a_label_vector == 1] = 1
 
-# In[4]:
-
-
-h_label_vector[h_label_vector == 2] = 0
-a_label_vector[a_label_vector == 3] = 1
-
-
-# In[5]:
-
-
-h_label_vector_test[h_label_vector_test == 2] = 0
-a_label_vector_test[a_label_vector_test == 3] = 1
+h_label_vector_test[h_label_vector_test == 0] = 0
+a_label_vector_test[a_label_vector_test == 1] = 1
 
 
 # In[6]:
@@ -225,7 +197,7 @@ eval_data = float_compatible((featureSet_testing).astype(np.float32))
 
 
 rmsprop = optimizers.RMSprop(lr=0.0001, rho=0.9, epsilon=None, decay=0.0)
-adam = optimizers.Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+adam = optimizers.Adam(lr=3e-5, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 adagrad = optimizers.Adagrad(lr=0.01, epsilon=None, decay=0.0)
 adadelta = optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=None, decay=0.0)
@@ -234,7 +206,6 @@ nadam = optimizers.Nadam(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=None, sched
 
 
 # In[11]:
-
 
 featureSet = train_data
 Label = label_training
@@ -245,7 +216,6 @@ print('training label: ' + str(Label.shape))
 
 # In[12]:
 
-
 featureSet_val = eval_data
 Label_val = label_testing
 
@@ -254,7 +224,6 @@ print('evaluation label: ' + str(Label_val.shape))
 
 
 # In[13]:
-
 
 # Load training npy files
 featureSet_training = np.vstack((h_feature_vector, a_feature_vector))
@@ -274,103 +243,67 @@ def record(str_message, log_file):
     file.write(str_message)
     file.close()
 
-# In[15]:
-
-def conv_network_model_opt(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes, dense_layers):
-
-    save_to_path = str(num_layers) + '_Layer(s)//'
-    
-    if not os.path.exists(save_to_path):
-        os.mkdir(save_to_path)
-
-    X, X_test, Y, Y_test= train_test_split(featureSet, Label, test_size=0.20, shuffle=True)
-
-    model=Sequential()
-    
-    model.add(Convolution1D(nb_filter=nbindex, filter_length=fillength, activation='relu', input_shape=(featureSet.shape[1], featureSet.shape[2]), kernel_constraint=maxnorm(3)))
-    model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
-    model.add(Dropout(dropout))
-
-    for layer in range(0, num_layers-1):
-        model.add(Convolution1D(nb_filter=nbindex, filter_length=fillength, activation='relu', kernel_constraint=maxnorm(3)))
-        model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
-        model.add(Dropout(dropout))
-
-    model.add(Flatten())
-    
-    for layer in range(0, dense_layers):
-        model.add(Dense(n_neurons, activation='relu'))
-        model.add(Dropout(dropout))
-
-    model.add(Dense(classes, activation='softmax'))
-
-    model.compile(loss='binary_crossentropy', optimizer = adam, metrics=['accuracy'])
-    
-    model.summary()
-
-    filepath = str(num_layers) + "_Layer(s)//Checkpoint_"+ title + ".hdf5"
-    
-    checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
-
-    early_stopping_monitor = EarlyStopping(patience=50)
-
-    callbacks_list = [checkpoint, early_stopping_monitor]
-
-    model.fit(X, Y, nb_epoch=n_epoch, batch_size=n_batch,  callbacks=callbacks_list, validation_data=(X_test, Y_test), verbose=1)
-
-    model.save_weights(str(num_layers) + "_Layer(s)//" + title + ".hdf5")
-
-    model.load_weights(filepath)
-
-
 # In[ ]:
-
-
 def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes, dense_layers):
     model = Sequential()
 
-    model.add(Convolution1D(nb_filter=nbindex, filter_length=fillength, activation='relu',
+    model.add(Convolution1D(nb_filter=nbindex, filter_length=fillength,
                             input_shape=(featureSet.shape[1], featureSet.shape[2]), kernel_constraint=maxnorm(3)))
-    model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
+    model.add(LeakyReLU(alpha=0.05))
+    model.add(Dropout(dropout))
+    model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
+                            kernel_constraint=maxnorm(3), strides=2))
+    model.add(LeakyReLU(alpha=0.05))
+    model.add(Dropout(dropout))
+    model.add(Convolution1D(nb_filter=nbindex*3, filter_length=fillength,
+                            kernel_constraint=maxnorm(3)))
+    model.add(LeakyReLU(alpha=0.05))
+    model.add(Dropout(dropout))
+    model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
+                            kernel_constraint=maxnorm(3), strides=2))  
+    model.add(LeakyReLU(alpha=0.05))
     model.add(Dropout(dropout))
 
-    for layer in range(0, num_layers-1):
-        model.add(Convolution1D(nb_filter=nbindex, filter_length=fillength,
-                                activation='relu', kernel_constraint=maxnorm(3)))
-        model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
-        model.add(Dropout(dropout))
-
     model.add(Flatten())
-
-    for layer in range(0, dense_layers):
-        model.add(Dense(n_neurons, activation='relu'))
-        model.add(Dropout(dropout))
 
     model.add(Dense(classes, activation='softmax'))
 
     model.compile(loss='binary_crossentropy',
-                  optimizer=rmsprop, metrics=['accuracy'])
+                  optimizer=adam, metrics=['accuracy'])
 
     model.summary()
 
     return model
 
-# In[17]:
 
+#title = 'H_A_neurons_' + str(n_neurons) + '_batches_' + str(n_batch) + '_filters_' + str(
+#    nbindex) + '_dropout_' + str(dropout) + '_kerSize_' + str(fillength) + '_dense_' + str(dense_layers)
 
-# n_neurons = 56
-this_title = 'H_A_neurons_' + str(n_neurons) + '_batches_' + str(n_batch) + '_filters_' + str(nbindex) + '_dropout_' + str(dropout) + '_kerSize_' + str(fillength) + '_dense_' + str(dense_layers)
-print(this_title)
+title = 'All_CNN'
 
-conv_network_model_opt(this_title, num_layers=3, n_neurons=n_neurons, n_batch=n_batch, nbindex=nbindex, dropout=dropout, classes=classes, dense_layers=dense_layers)
+save_to_path = str(num_layers) + '_Layer(s)//'
 
+if not os.path.exists(save_to_path):
+    os.mkdir(save_to_path)
 
-# In[19]:
+X, X_test, Y, Y_test= train_test_split(featureSet, Label, test_size=0.25, shuffle=True)
 
+model = create_cnn(title, num_layers, n_neurons, n_batch,
+            nbindex, dropout, classes, dense_layers)
 
-ahfilepath = "2_Layer(s)//" + this_title + '.hdf5'
-ahmodel = create_cnn(this_title, num_layers=3, n_neurons=n_neurons, n_batch=n_batch, nbindex=nbindex, dropout=dropout, classes=classes, dense_layers=dense_layers)
-ahmodel.load_weights(ahfilepath)
+filepath = str(num_layers) + "_Layer(s)//Checkpoint_"+ title + ".hdf5"
+
+checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+
+early_stopping_monitor = EarlyStopping(patience=50)
+
+callbacks_list = [checkpoint, early_stopping_monitor]
+
+model.fit(X, Y, nb_epoch=n_epoch, batch_size=n_batch,  callbacks=callbacks_list, validation_data=(X_test, Y_test), verbose=1)
+
+model.save_weights(str(num_layers) + "_Layer(s)//" + title + ".hdf5")
+
+model.load_weights(filepath)
 
 y_pred = []
 y_true = []
@@ -383,7 +316,7 @@ for item in list(Label_val):
         else:
             y_true.append(0)
 
-for item in list(ahmodel.predict(featureSet_val)):
+for item in list(model.predict(featureSet_val)):
         if item[0] > item[1]:
             y_pred.append(0)
         elif item[0] < item[1]:
@@ -393,6 +326,5 @@ for item in list(ahmodel.predict(featureSet_val)):
 
 
 # In[ ]:
-
 
 print(accuracy_score(y_true, y_pred))
