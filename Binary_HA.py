@@ -82,14 +82,14 @@ NumofFeaturetoUse = 272  # int(sys.argv[1])
 
 classes = 2
 NumofFeaturetoUse = 272
-n_neurons = 96
-dense_layers = 0
+n_neurons = 1028
+dense_layers = 1
 num_layers = 4
 fillength = 2
 nbindex = 128
 dropout = 0.2
 n_batch = 256
-n_epoch = 200
+n_epoch = 500
 # In[2]:
 
 
@@ -110,29 +110,29 @@ def update_progress(progress):
     text = "Progress: [{0}] {1:.1f}%".format( "#" * block + "-" * (bar_length - block), progress * 100)
     print(text)
 
-h_feature_vector = np.load('Features//h_feature_vector_48.npy')
-h_label_vector = np.load('Features//h_label_vector_48.npy')
+h_feature_vector = np.load('..//Features//h_feature_vector_48.npy')
+h_label_vector = np.load('..//Features//h_label_vector_48.npy')
 
-a_feature_vector = np.load('Features//a_feature_vector_48.npy')
-a_label_vector = np.load('Features//a_label_vector_48.npy')
+a_feature_vector = np.load('..//Features//a_feature_vector_48.npy')
+a_label_vector = np.load('..//Features//a_label_vector_48.npy')
 
-n_feature_vector = np.load('Features//n_feature_vector_48.npy')
-n_label_vector = np.load('Features//n_label_vector_48.npy')
+n_feature_vector = np.load('..//Features//n_feature_vector_48.npy')
+n_label_vector = np.load('..//Features//n_label_vector_48.npy')
 
-s_feature_vector = np.load('Features//s_feature_vector_48.npy')
-s_label_vector = np.load('Features//s_label_vector_48.npy')
+s_feature_vector = np.load('..//Features//s_feature_vector_48.npy')
+s_label_vector = np.load('..//Features//s_label_vector_48.npy')
 
-h_feature_vector_test = np.load('Features//h_feature_vector_test_48.npy')
-h_label_vector_test = np.load('Features//h_label_vector_test_48.npy')
+h_feature_vector_test = np.load('..//Features//h_feature_vector_test_48.npy')
+h_label_vector_test = np.load('..//Features//h_label_vector_test_48.npy')
 
-a_feature_vector_test = np.load('Features//a_feature_vector_test_48.npy')
-a_label_vector_test = np.load('Features//a_label_vector_test_48.npy')
+a_feature_vector_test = np.load('..//Features//a_feature_vector_test_48.npy')
+a_label_vector_test = np.load('..//Features//a_label_vector_test_48.npy')
 
-n_feature_vector_test = np.load('Features//n_feature_vector_test_48.npy')
-n_label_vector_test = np.load('Features//n_label_vector_test_48.npy')
+n_feature_vector_test = np.load('..//Features//n_feature_vector_test_48.npy')
+n_label_vector_test = np.load('..//Features//n_label_vector_test_48.npy')
 
-s_feature_vector_test = np.load('Features//s_feature_vector_test_48.npy')
-s_label_vector_test = np.load('Features//s_label_vector_test_48.npy')
+s_feature_vector_test = np.load('..//Features//s_feature_vector_test_48.npy')
+s_label_vector_test = np.load('..//Features//s_label_vector_test_48.npy')
 
 h_label_vector[h_label_vector == 0] = 0
 a_label_vector[a_label_vector == 1] = 1
@@ -250,18 +250,25 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
     model.add(Convolution1D(nb_filter=nbindex, filter_length=fillength,
                             input_shape=(featureSet.shape[1], featureSet.shape[2]), kernel_constraint=maxnorm(3)))
     model.add(LeakyReLU(alpha=0.05))
+    model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
+
     model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
-                            kernel_constraint=maxnorm(3), strides=2))
+                            kernel_constraint=maxnorm(3)))
     model.add(LeakyReLU(alpha=0.05))
+    model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
+
     model.add(Convolution1D(nb_filter=nbindex*3, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))
     model.add(LeakyReLU(alpha=0.05))
+    model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
+
     model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
-                            kernel_constraint=maxnorm(3), strides=2))  
+                            kernel_constraint=maxnorm(3)))  
     model.add(LeakyReLU(alpha=0.05))
+    model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
     model.add(Flatten())
