@@ -59,6 +59,7 @@ from keras.layers import Activation
 from keras.utils import np_utils
 from keras.utils import to_categorical
 from keras.layers import LeakyReLU
+from keras.models import load_model
 
 from colorama import Fore, Back, Style
 
@@ -82,12 +83,12 @@ NumofFeaturetoUse = 272  # int(sys.argv[1])
 
 classes = 2
 NumofFeaturetoUse = 272
-n_neurons = 1028
+n_neurons = 1024
 dense_layers = 1
 num_layers = 4
 fillength = 2
-nbindex = 128
-dropout = 0.2
+nbindex = 256
+dropout = 2
 n_batch = 256
 n_epoch = 500
 # In[2]:
@@ -197,7 +198,7 @@ eval_data = float_compatible((featureSet_testing).astype(np.float32))
 
 
 rmsprop = optimizers.RMSprop(lr=0.0001, rho=0.9, epsilon=None, decay=0.0)
-adam = optimizers.Adam(lr=3e-5, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+adam = optimizers.Adam(lr=5e-6, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 adagrad = optimizers.Adagrad(lr=0.01, epsilon=None, decay=0.0)
 adadelta = optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=None, decay=0.0)
@@ -287,7 +288,9 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
 #    nbindex) + '_dropout_' + str(dropout) + '_kerSize_' + str(fillength) + '_dense_' + str(dense_layers)
 
 title = 'All_CNN'
-
+filepath = str(num_layers) + "_Layer(s)//Checkpoint_" + title + ".hdf5"
+model = load_model(filepath)
+'''
 save_to_path = str(num_layers) + '_Layer(s)//'
 
 if not os.path.exists(save_to_path):
@@ -311,7 +314,7 @@ model.fit(X, Y, nb_epoch=n_epoch, batch_size=n_batch,  callbacks=callbacks_list,
 model.save_weights(str(num_layers) + "_Layer(s)//" + title + ".hdf5")
 
 model.load_weights(filepath)
-
+'''
 y_pred = []
 y_true = []
 
@@ -335,3 +338,8 @@ for item in list(model.predict(featureSet_val)):
 # In[ ]:
 
 print(accuracy_score(y_true, y_pred))
+tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+print(tn)
+print(fp)
+print(fn)
+print(tp)
