@@ -82,14 +82,14 @@ NumofFeaturetoUse = 272  # int(sys.argv[1])
 
 classes = 2
 NumofFeaturetoUse = 100
-n_neurons = 1024
+n_neurons = 2048
 dense_layers = 1
-num_layers = 3
+num_layers = 4
 fillength = 2
-nbindex = 256
-dropout = 0.1
-n_batch = 256
-n_epoch = 500
+nbindex = 36
+dropout = 0.2
+n_batch = 128
+n_epoch = 100
 # In[2]:
 
 
@@ -196,8 +196,8 @@ eval_data = float_compatible((featureSet_testing).astype(np.float32))
 # In[10]:
 
 rmsprop = optimizers.RMSprop(lr=0.0001, rho=0.9, epsilon=None, decay=0.0)
-adam = optimizers.Adam(lr=5e-5, beta_1=0.9, beta_2=0.999,
-                       epsilon=None, decay=0, amsgrad=True)
+adam = optimizers.Adam(lr=3e-5, beta_1=0.9, beta_2=0.999,
+                       epsilon=None, decay=5e-6, amsgrad=True)
 sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 adagrad = optimizers.Adagrad(lr=0.01, epsilon=None, decay=0.0)
 adadelta = optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=None, decay=0.0)
@@ -291,7 +291,7 @@ save_to_path = str(num_layers) + '_Layer(s)//'
 if not os.path.exists(save_to_path):
     os.mkdir(save_to_path)
 
-X, X_test, Y, Y_test= model_selection.train_test_split(featureSet, Label, test_size=0.10, shuffle=True)
+X, X_test, Y, Y_test= model_selection.train_test_split(featureSet, Label, test_size=0.25, shuffle=True)
 
 model = create_cnn(title, num_layers, n_neurons, n_batch,
             nbindex, dropout, classes, dense_layers)
