@@ -89,7 +89,7 @@ fillength = 2
 nbindex = 36
 dropout = 0.2
 n_batch = 128
-n_epoch = 100
+n_epoch = 1000
 # In[2]:
 
 
