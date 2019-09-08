@@ -82,14 +82,14 @@ NumofFeaturetoUse = 272  # int(sys.argv[1])
 
 classes = 2
 NumofFeaturetoUse = 100
-n_neurons = 2048
+n_neurons = 4096
 dense_layers = 1
 num_layers = 4
-fillength = 2
-nbindex = 36
+fillength = 4
+nbindex = 72
 dropout = 0.2
 n_batch = 128
-n_epoch = 1000
+n_epoch = 10000
 # In[2]:
 
 
