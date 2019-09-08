@@ -156,7 +156,7 @@ def float_compatible(input_np):
 train_data = float_compatible((featureSet_training).astype(np.float32))
 eval_data = float_compatible((featureSet_testing).astype(np.float32))
 
-adam = optimizers.Adam(lr = 3e-5, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 1e-6, amsgrad = True)
+adam = optimizers.Adam(lr = 3e-5, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 0, amsgrad = True)
 sgd = optimizers.SGD(lr = 0.01, decay = 1e-6, momentum = 0.9, nesterov = True)
 rmsprop = optimizers.RMSprop(lr = 0.0001, rho = 0.9, epsilon = None, decay = 0.0)
 adagrad = optimizers.Adagrad(lr = 0.01, epsilon = None, decay = 0.0)
