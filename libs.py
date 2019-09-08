@@ -66,3 +66,6 @@ from tensorflow.python.client import device_lib
 # confirm Keras sees the GPU
 from keras import backend
 # print(len(backend.tensorflow_backend._get_available_gpus()) > 0)
+
+#warnings.filterwarnings('ignore')
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'

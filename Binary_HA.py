@@ -34,10 +34,10 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import normalize
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import auc, confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 from sklearn import mixture
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.utils import class_weight
 
@@ -86,7 +86,7 @@ fillength = 4
 nbindex = 72
 dropout = 0.2
 n_batch = 128
-n_epoch = 10000
+n_epoch = 50000
 
 def update_progress(progress):
     bar_length = 100
@@ -105,23 +105,24 @@ def update_progress(progress):
     text = "Progress: [{0}] {1:.1f}%".format( "#" * block + "-" * (bar_length - block), progress * 100)
     print(text)
 
-h_feature_vector = np.load('..//Features//h_feature_vector_48.npy')
-h_label_vector = np.load('..//Features//h_label_vector_48.npy')
-a_feature_vector = np.load('..//Features//a_feature_vector_48.npy')
-a_label_vector = np.load('..//Features//a_label_vector_48.npy')
-n_feature_vector = np.load('..//Features//n_feature_vector_48.npy')
-n_label_vector = np.load('..//Features//n_label_vector_48.npy')
-s_feature_vector = np.load('..//Features//s_feature_vector_48.npy')
-s_label_vector = np.load('..//Features//s_label_vector_48.npy')
+prefix = '..//'
+h_feature_vector = np.load(prefix + 'Features//h_feature_vector_48.npy')
+h_label_vector = np.load(prefix + 'Features//h_label_vector_48.npy')
+a_feature_vector = np.load(prefix + 'Features//a_feature_vector_48.npy')
+a_label_vector = np.load(prefix + 'Features//a_label_vector_48.npy')
+n_feature_vector = np.load(prefix + 'Features//n_feature_vector_48.npy')
+n_label_vector = np.load(prefix + 'Features//n_label_vector_48.npy')
+s_feature_vector = np.load(prefix + 'Features//s_feature_vector_48.npy')
+s_label_vector = np.load(prefix + 'Features//s_label_vector_48.npy')
 
-h_feature_vector_test = np.load('..//Features//h_feature_vector_test_48.npy')
-h_label_vector_test = np.load('..//Features//h_label_vector_test_48.npy')
-a_feature_vector_test = np.load('..//Features//a_feature_vector_test_48.npy')
-a_label_vector_test = np.load('..//Features//a_label_vector_test_48.npy')
-n_feature_vector_test = np.load('..//Features//n_feature_vector_test_48.npy')
-n_label_vector_test = np.load('..//Features//n_label_vector_test_48.npy')
-s_feature_vector_test = np.load('..//Features//s_feature_vector_test_48.npy')
-s_label_vector_test = np.load('..//Features//s_label_vector_test_48.npy')
+h_feature_vector_test = np.load(prefix + 'Features//h_feature_vector_test_48.npy')
+h_label_vector_test = np.load(prefix + 'Features//h_label_vector_test_48.npy')
+a_feature_vector_test = np.load(prefix + 'Features//a_feature_vector_test_48.npy')
+a_label_vector_test = np.load(prefix + 'Features//a_label_vector_test_48.npy')
+n_feature_vector_test = np.load(prefix + 'Features//n_feature_vector_test_48.npy')
+n_label_vector_test = np.load(prefix + 'Features//n_label_vector_test_48.npy')
+s_feature_vector_test = np.load(prefix + 'Features//s_feature_vector_test_48.npy')
+s_label_vector_test = np.load(prefix + 'Features//s_label_vector_test_48.npy')
 
 h_label_vector[h_label_vector == 0] = 0
 a_label_vector[a_label_vector == 1] = 1
@@ -155,8 +156,8 @@ def float_compatible(input_np):
 train_data = float_compatible((featureSet_training).astype(np.float32))
 eval_data = float_compatible((featureSet_testing).astype(np.float32))
 
-adam = optimizers.Adam(lr = 3e-5, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 5e-6, amsgrad = True)
-sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+adam = optimizers.Adam(lr = 3e-5, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 1e-6, amsgrad = True)
+sgd = optimizers.SGD(lr = 0.01, decay = 1e-6, momentum = 0.9, nesterov = True)
 rmsprop = optimizers.RMSprop(lr = 0.0001, rho = 0.9, epsilon = None, decay = 0.0)
 adagrad = optimizers.Adagrad(lr = 0.01, epsilon = None, decay = 0.0)
 adadelta = optimizers.Adadelta(lr = 1.0, rho = 0.95, epsilon = None, decay = 0.0)
@@ -182,7 +183,6 @@ def record(str_message, log_file):
     file = open(log_file, 'a')
     file.write(str_message)
     file.close()
-
 
 def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes, dense_layers):
 
@@ -275,17 +275,16 @@ def predict_cnn(model):
     print('f1 score: ' + str(f1_score(y_true, y_pred)))
 
     tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
-    
-    print('true negative ' + str(tn))
+
+    print('true positive ' + str(tp))
     print('false positive ' + str(fp))
     print('false negative ' + str(fn))
-    print('true positive ' + str(tp))
+    print('true negative ' + str(tn))
 
 title = 'H_A_neurons_' + str(n_neurons) + '_filters_' + str(
     nbindex) + '_dropout_' + str(dropout) + '_epoch_' + str(n_epoch)
 
 final_filepath = str(num_layers) + "_Layer(s)//Final_" + title + ".hdf5"
-
 #model = load_model(final_filepath)
 model = train_cnn()
 predict_cnn(model)
