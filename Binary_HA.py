@@ -46,7 +46,7 @@ import keras
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.constraints import maxnorm
 from keras.layers import Convolution1D, Dense, MaxPooling1D, Flatten, Add, Dropout, Input, Activation
-from keras.layers import TimeDistributed, Bidirectional, LSTM
+from keras.layers import TimeDistributed, Bidirectional, LSTM, LeakyReLU
 from keras.models import Sequential
 from keras import optimizers, regularizers
 from keras.utils import np_utils, to_categorical
@@ -78,14 +78,14 @@ segment_pad = int(sample_rate * 0.02)     # 0.02
 overlapping = int(sample_rate * 0.1)   # 0.1
 
 classes = 2
-NumofFeaturetoUse = 100
+NumofFeaturetoUse = 272
 n_neurons = 4096
 dense_layers = 1
 num_layers = 4
-fillength = 4
-nbindex = 72
-dropout = 0.2
-n_batch = 128
+fillength = 5
+nbindex = 128
+dropout = 0.15
+n_batch = 256
 n_epoch = 50000
 
 def update_progress(progress):
@@ -156,7 +156,7 @@ def float_compatible(input_np):
 train_data = float_compatible((featureSet_training).astype(np.float32))
 eval_data = float_compatible((featureSet_testing).astype(np.float32))
 
-adam = optimizers.Adam(lr = 3e-5, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 1e-6, amsgrad = True)
+adam = optimizers.Adam(lr = 1e-5, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 0, amsgrad = True)
 sgd = optimizers.SGD(lr = 0.01, decay = 1e-6, momentum = 0.9, nesterov = True)
 rmsprop = optimizers.RMSprop(lr = 0.0001, rho = 0.9, epsilon = None, decay = 0.0)
 adagrad = optimizers.Adagrad(lr = 0.01, epsilon = None, decay = 0.0)
@@ -193,13 +193,13 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
     model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
-
+    '''
     model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))
     model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
-
+    '''
     model.add(Convolution1D(nb_filter=nbindex*3, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))
     model.add(LeakyReLU(alpha=0.05))
@@ -231,7 +231,7 @@ def train_cnn():
     if not os.path.exists(save_to_path):
         os.mkdir(save_to_path)
 
-    X, X_test, Y, Y_test= model_selection.train_test_split(featureSet, Label, test_size = 0.25, shuffle = True)
+    X, X_test, Y, Y_test= train_test_split(featureSet, Label, test_size = 0.25, shuffle = True)
 
     model = create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes, dense_layers)
 
