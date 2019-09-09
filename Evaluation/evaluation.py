@@ -172,6 +172,7 @@ def predict_cnn(model):
     print('true negative ' + str(tn))
 
 
-final_filepath = prefix + 'modules//Checkpoint_H_A_neurons_4096_filters_512_dropout_0.2_epoch_50000.hdf5'
+final_filepath = prefix + \
+    'modules//Checkpoint_H_A_neurons_4096_filters_512_dropout_0.2_epoch_50000.hdf5'
 model = load_model(final_filepath)
 predict_cnn(model)
