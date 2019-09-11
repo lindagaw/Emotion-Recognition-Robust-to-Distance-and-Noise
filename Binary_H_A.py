@@ -106,7 +106,7 @@ def update_progress(progress):
     text = "Progress: [{0}] {1:.1f}%".format( "#" * block + "-" * (bar_length - block), progress * 100)
     print(text)
 
-prefix = '..//'
+prefix = '..//..//'
 h_feature_vector = np.load(prefix + 'Features//h_feature_vector_48.npy')
 h_label_vector = np.load(prefix + 'Features//h_label_vector_48.npy')
 a_feature_vector = np.load(prefix + 'Features//a_feature_vector_48.npy')
