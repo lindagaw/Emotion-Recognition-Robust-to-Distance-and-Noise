@@ -1,3 +1,4 @@
+
 import random
 import os
 import shutil
@@ -78,15 +79,15 @@ segment_pad = int(sample_rate * 0.02)     # 0.02
 overlapping = int(sample_rate * 0.1)   # 0.1
 
 classes = 2
-NumofFeaturetoUse = 272
+NumofFeaturetoUse = 100
 n_neurons = 4096
 dense_layers = 1
 num_layers = 3
-fillength = 5
-nbindex = 1024
-dropout = 0.15
-n_batch = 256
-n_epoch = 5000
+fillength = 4
+nbindex = 512
+dropout = 0.2
+n_batch = 128
+n_epoch = 1000
 
 def update_progress(progress):
     bar_length = 100
@@ -105,7 +106,7 @@ def update_progress(progress):
     text = "Progress: [{0}] {1:.1f}%".format( "#" * block + "-" * (bar_length - block), progress * 100)
     print(text)
 
-prefix = '..//'
+prefix = '..//..//'
 h_feature_vector = np.load(prefix + 'Features//h_feature_vector_48.npy')
 h_label_vector = np.load(prefix + 'Features//h_label_vector_48.npy')
 a_feature_vector = np.load(prefix + 'Features//a_feature_vector_48.npy')
@@ -156,7 +157,7 @@ def float_compatible(input_np):
 train_data = float_compatible((featureSet_training).astype(np.float32))
 eval_data = float_compatible((featureSet_testing).astype(np.float32))
 
-adam = optimizers.Adam(lr = 1e-5, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 0, amsgrad = True)
+adam = optimizers.Adam(lr = 3e-6, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 0, amsgrad = True)
 sgd = optimizers.SGD(lr = 0.01, decay = 1e-6, momentum = 0.9, nesterov = True)
 rmsprop = optimizers.RMSprop(lr = 0.0001, rho = 0.9, epsilon = None, decay = 0.0)
 adagrad = optimizers.Adagrad(lr = 0.01, epsilon = None, decay = 0.0)
@@ -193,20 +194,20 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
     model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
-    '''
+
     model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))
     model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
-    '''
-    model.add(Convolution1D(nb_filter=nbindex*3, filter_length=fillength-2,
+
+    model.add(Convolution1D(nb_filter=nbindex*3, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))
     model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
-    model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength-2,
+    model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
                             kernel_constraint=maxnorm(3)))  
     model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
@@ -223,21 +224,22 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
     return model
 
 def train_cnn():
-    save_to_path = str(num_layers) + '_Layer(s)//'
+    
+    save_to_path = prefix + str(num_layers) + "_Layer(s)//"
 
-    checkpoint_filepath = str(num_layers) + "_Layer(s)//Checkpoint_" + title + ".hdf5"
-    final_filepath = str(num_layers) + "_Layer(s)//Final_" + title + ".hdf5"
+    checkpoint_filepath = prefix + str(num_layers) + "_Layer(s)//Checkpoint_" + title + ".hdf5"
+    final_filepath = prefix + str(num_layers) + "_Layer(s)//Final_" + title + ".hdf5"
 
     if not os.path.exists(save_to_path):
         os.mkdir(save_to_path)
 
-    X, X_test, Y, Y_test= train_test_split(featureSet, Label, test_size = 0.5, shuffle = True)
+    X, X_test, Y, Y_test= train_test_split(featureSet, Label, test_size = 0.25, shuffle = True)
 
     model = create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes, dense_layers)
 
-    checkpoint = ModelCheckpoint(checkpoint_filepath, monitor = 'val_loss', verbose = 0, save_best_only = True, mode = 'auto')
+    checkpoint = ModelCheckpoint(checkpoint_filepath, monitor = 'val_acc', verbose = 0, save_best_only = True, mode = 'auto')
 
-    early_stopping_monitor = EarlyStopping(patience = 50)
+    early_stopping_monitor = EarlyStopping(patience = 100)
 
     callbacks_list = [checkpoint, early_stopping_monitor]
 
@@ -270,7 +272,7 @@ def predict_cnn(model):
                 y_pred.append(0)
 
     print('Accuracy: ' + str(accuracy_score(y_true, y_pred)))
-    print('Precision: ' + str(precision_score,(y_true, y_pred)))
+    print('Precision: ' + str(precision_score(y_true, y_pred)))
     print('Recall: ' + str(recall_score(y_true, y_pred)))
     print('f1 score: ' + str(f1_score(y_true, y_pred)))
 
@@ -284,7 +286,20 @@ def predict_cnn(model):
 title = 'H_A_neurons_' + str(n_neurons) + '_filters_' + str(
     nbindex) + '_dropout_' + str(dropout) + '_epoch_' + str(n_epoch)
 
-final_filepath = str(num_layers) + "_Layer(s)//Final_" + title + ".hdf5"
+final_filepath = prefix + str(num_layers) + "_Layer(s)//Final_" + title + ".hdf5"
 #model = load_model(final_filepath)
 model = train_cnn()
 predict_cnn(model)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+

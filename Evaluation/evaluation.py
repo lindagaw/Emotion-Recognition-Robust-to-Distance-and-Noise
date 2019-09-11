@@ -441,5 +441,6 @@ def predict_cnn(model):
 
 prefix = 'C://Users//yg9ca//Documents//'
 final_filepath = prefix + 'modules//Checkpoint_H_A_neurons_4096_filters_256_dropout_0.2_epoch_50000.hdf5'
+
 model = load_model(final_filepath)
 h_a_classifier_eval([test_Happy])
