@@ -81,12 +81,12 @@ classes = 2
 NumofFeaturetoUse = 272
 n_neurons = 4096
 dense_layers = 1
-num_layers = 4
+num_layers = 3
 fillength = 5
-nbindex = 128
+nbindex = 1024
 dropout = 0.15
 n_batch = 256
-n_epoch = 1
+n_epoch = 5000
 
 def update_progress(progress):
     bar_length = 100
@@ -194,6 +194,15 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
 
+    '''
+    model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength,
+                            kernel_constraint=maxnorm(3)))
+    model.add(LeakyReLU(alpha=0.05))
+    model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
+    model.add(Dropout(dropout))
+    '''
+    model.add(Convolution1D(nb_filter=nbindex*3, filter_length=fillength-2,
+
     model.add(LSTM(nbindex, recurrent_activation='hard_sigmoid',
                    use_bias=True, return_sequences=True))
 
@@ -202,6 +211,9 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
     model.add(LeakyReLU(alpha=0.05))
     model.add(MaxPooling1D(pool_size=2, strides=2, padding='valid'))
     model.add(Dropout(dropout))
+
+
+    model.add(Convolution1D(nb_filter=nbindex*2, filter_length=fillength-2,
 
     model.add(LSTM(nbindex*3, recurrent_activation='hard_sigmoid',
                    use_bias=True, return_sequences=True))
@@ -234,7 +246,7 @@ def train_cnn():
     if not os.path.exists(save_to_path):
         os.mkdir(save_to_path)
 
-    X, X_test, Y, Y_test= train_test_split(featureSet, Label, test_size = 0.25, shuffle = True)
+    X, X_test, Y, Y_test= train_test_split(featureSet, Label, test_size = 0.5, shuffle = True)
 
     model = create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes, dense_layers)
 

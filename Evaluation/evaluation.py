@@ -71,7 +71,34 @@ from keras import backend
 #warnings.filterwarnings('ignore')
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-NumofFeaturetoUse = 100
+sample_rate=44100
+hop_length = 441  # frame size= 2*hop
+segment_length=int(sample_rate*0.2)  #0.2
+segment_pad=int(sample_rate*0.02)     #0.02
+overlappiong=int(sample_rate*0.1)   #0.1
+
+NumofFeaturetoUse = 100 # this will re-assigned for different classifiers
+frame_number = 48
+
+# input new indices file here
+indices_filename = 'D://indices_filename.npy'
+indices=np.load(indices_filename)
+
+h_TESS = 'D://Datasets//TESS//PAD_REVERB_NOISE//Happy//'
+a_TESS = 'D://Datasets//TESS//PAD_REVERB_NOISE//Angry//'
+n_TESS = 'D://Datasets//TESS//PAD_REVERB_NOISE//Neutral//'
+s_TESS = 'D://Datasets//TESS//PAD_REVERB_NOISE//Sad//'
+
+h_EMO = 'D://Datasets//EMO-DB//wav//Happy//'
+a_EMO = 'D://Datasets//EMO-DB//wav//Angry//'
+n_EMO = 'D://Datasets//EMO-DB//wav//Neutral//'
+s_EMO = 'D://Datasets//EMO-DB//wav//Sad//'
+o_EMO = 'D://Datasets//EMO-DB//wav//Other//'
+
+test_Happy = 'D://Datasets//TRAINING//Happy_test//'
+test_Angry = 'D://Datasets//TRAINING//Angry_test//'
+test_Neutral = 'D://Datasets//TRAINING//Neutral_test//'
+test_Sad = 'D://Datasets//TRAINING//Sad_test//'
 
 prefix = '..//..//'
 h_feature_vector = np.load(prefix + 'Features//h_feature_vector_48.npy')
@@ -138,6 +165,247 @@ featureSet_val = np.split(
 print('evaluation data: ' + str(featureSet_val.shape))
 print('evaluation label: ' + str(Label_val.shape))
 
+def function_FeatureExtractfromSinglewindow(y,hop_length,sr):
+
+    genFeatures=np.array([])
+
+    mfcc0 = librosa.feature.mfcc(y=y, sr=sr, n_fft=hop_length*2, hop_length=hop_length, n_mfcc=13)
+    mfcc=np.transpose(mfcc0)
+
+    genFeatures = np.hstack((genFeatures, np.amin(mfcc, 0)))
+    genFeatures = np.hstack((genFeatures, np.amax(mfcc, 0)))
+    genFeatures = np.hstack((genFeatures, np.median(mfcc, 0)))
+    genFeatures = np.hstack((genFeatures, np.mean(mfcc, 0)))
+    genFeatures = np.hstack((genFeatures, np.std(mfcc, 0)))
+    genFeatures = np.hstack((genFeatures, np.var(mfcc, 0)))
+    genFeatures = np.hstack((genFeatures, st.skew(mfcc, 0)))
+    genFeatures = np.hstack((genFeatures, st.kurtosis(mfcc, 0)))
+    #print(genFeatures.shape)
+
+    mfcc_delta=librosa.feature.delta(mfcc0)
+    mfcc_delta=np.transpose(mfcc_delta)
+    genFeatures = np.hstack((genFeatures, np.amin(mfcc_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.amax(mfcc_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.median(mfcc_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.mean(mfcc_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.std(mfcc_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.var(mfcc_delta, 0)))
+    genFeatures = np.hstack((genFeatures, st.skew(mfcc_delta, 0)))
+    genFeatures = np.hstack((genFeatures, st.kurtosis(mfcc_delta, 0)))
+    #print(genFeatures.shape)
+
+    zcr0=librosa.feature.zero_crossing_rate(y=y, frame_length=hop_length*2, hop_length=hop_length)
+    zcr=np.transpose(zcr0)
+    genFeatures = np.hstack((genFeatures, np.amin(zcr, 0)))
+    genFeatures = np.hstack((genFeatures, np.amax(zcr, 0)))
+    genFeatures = np.hstack((genFeatures, np.median(zcr, 0)))
+    genFeatures = np.hstack((genFeatures, np.mean(zcr, 0)))
+    genFeatures = np.hstack((genFeatures, np.std(zcr, 0)))
+    genFeatures = np.hstack((genFeatures, np.var(zcr, 0)))
+    genFeatures = np.hstack((genFeatures, st.skew(zcr, 0)))
+    genFeatures = np.hstack((genFeatures, st.kurtosis(zcr, 0)))
+    #print(genFeatures.shape)
+
+    zcr_delta=librosa.feature.delta(zcr0)
+    zcr_delta=np.transpose(zcr_delta)
+    genFeatures = np.hstack((genFeatures, np.amin(zcr_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.amax(zcr_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.median(zcr_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.mean(zcr_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.std(zcr_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.var(zcr_delta, 0)))
+    genFeatures = np.hstack((genFeatures, st.skew(zcr_delta, 0)))
+    genFeatures = np.hstack((genFeatures, st.kurtosis(zcr_delta, 0)))
+    #print(genFeatures.shape)
+
+    Erms0=librosa.feature.rms(y=y, frame_length=hop_length*2, hop_length=hop_length)
+    Erms=np.transpose(Erms0)
+    genFeatures = np.hstack((genFeatures, np.amin(Erms, 0)))
+    genFeatures = np.hstack((genFeatures, np.amax(Erms, 0)))
+    genFeatures = np.hstack((genFeatures, np.median(Erms, 0)))
+    genFeatures = np.hstack((genFeatures, np.mean(Erms, 0)))
+    genFeatures = np.hstack((genFeatures, np.std(Erms, 0)))
+    genFeatures = np.hstack((genFeatures, np.var(Erms, 0)))
+    genFeatures = np.hstack((genFeatures, st.skew(Erms, 0)))
+    genFeatures = np.hstack((genFeatures, st.kurtosis(Erms, 0)))
+    #print(genFeatures.shape)
+
+    Erms_delta=librosa.feature.delta(Erms0)
+    Erms_delta=np.transpose(Erms_delta)
+    genFeatures = np.hstack((genFeatures, np.amin(Erms_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.amax(Erms_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.median(Erms_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.mean(Erms_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.std(Erms_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.var(Erms_delta, 0)))
+    genFeatures = np.hstack((genFeatures, st.skew(Erms_delta, 0)))
+    genFeatures = np.hstack((genFeatures, st.kurtosis(Erms_delta, 0)))
+    #print(genFeatures.shape)
+
+    cent0 = librosa.feature.spectral_centroid(y=y, sr=sr, n_fft=hop_length*2, hop_length=hop_length)
+    cent=np.transpose(cent0)
+    genFeatures = np.hstack((genFeatures, np.amin(cent, 0)))
+    genFeatures = np.hstack((genFeatures, np.amax(cent, 0)))
+    genFeatures = np.hstack((genFeatures, np.median(cent, 0)))
+    genFeatures = np.hstack((genFeatures, np.mean(cent, 0)))
+    genFeatures = np.hstack((genFeatures, np.std(cent, 0)))
+    genFeatures = np.hstack((genFeatures, np.var(cent, 0)))
+    genFeatures = np.hstack((genFeatures, st.skew(cent, 0)))
+    genFeatures = np.hstack((genFeatures, st.kurtosis(cent, 0)))
+    #print(genFeatures.shape)
+
+    cent_delta=librosa.feature.delta(cent0)
+    cent_delta=np.transpose(cent_delta)
+    genFeatures = np.hstack((genFeatures, np.amin(cent_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.amax(cent_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.median(cent_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.mean(cent_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.std(cent_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.var(cent_delta, 0)))
+    genFeatures = np.hstack((genFeatures, st.skew(cent_delta, 0)))
+    genFeatures = np.hstack((genFeatures, st.kurtosis(cent_delta, 0)))
+    #print(genFeatures.shape)
+    #Each frame of a magnitude spectrogram is normalized and treated as a distribution over frequency bins, from which the mean (centroid) is extracted per frame.
+
+    ############### pitch at certain frame
+    pitches, magnitudes = librosa.core.piptrack(y=y, sr=sr, fmin=75, fmax=8000, n_fft=hop_length*2, hop_length=hop_length)
+    p=[pitches[magnitudes[:,i].argmax(),i] for i in range(0,pitches.shape[1])]
+    pitch0=np.array(p)   #shape (305,)
+    pitch=np.transpose(pitch0)
+    genFeatures = np.hstack((genFeatures, np.amin(pitch, 0)))
+    genFeatures = np.hstack((genFeatures, np.amax(pitch, 0)))
+    genFeatures = np.hstack((genFeatures, np.median(pitch, 0)))
+    genFeatures = np.hstack((genFeatures, np.mean(pitch, 0)))
+    genFeatures = np.hstack((genFeatures, np.std(pitch, 0)))
+    genFeatures = np.hstack((genFeatures, np.var(pitch, 0)))
+    genFeatures = np.hstack((genFeatures, st.skew(pitch, 0)))
+    genFeatures = np.hstack((genFeatures, st.kurtosis(pitch, 0)))
+    #print(genFeatures.shape)
+
+    pitch_delta=librosa.feature.delta(pitch0)
+    pitch_delta=np.transpose(pitch_delta)
+    genFeatures = np.hstack((genFeatures, np.amin(pitch_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.amax(pitch_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.median(pitch_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.mean(pitch_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.std(pitch_delta, 0)))
+    genFeatures = np.hstack((genFeatures, np.var(pitch_delta, 0)))
+    genFeatures = np.hstack((genFeatures, st.skew(pitch_delta, 0)))
+    genFeatures = np.hstack((genFeatures, st.kurtosis(pitch_delta, 0)))
+    #print(genFeatures.shape)    #272
+    return genFeatures
+
+
+'''
+Extract specified amount of features from an audio file
+'''
+def function_FeatureExtract1(audiofile, NumofFeatures):
+    extension = '.wav'
+    flag_start_all = 0
+    flag_Y_start = 0
+    All = np.array([])
+    NumofFeaturetoUse = NumofFeatures #needs to be reassigned, takes two parameters
+    ListOfFrame2Vec = np.empty((0, frame_number, NumofFeaturetoUse))
+    audio, s_rate = librosa.load(audiofile, sr=sample_rate)
+    segment_start_flag = 0
+    start_seg = 0
+    while (start_seg + segment_length) < len(audio):
+        flag = 1
+        sound1 = audio[start_seg:(start_seg + segment_length)]
+
+        featureSet = function_FeatureExtractfromSinglewindow(sound1, hop_length, sample_rate)
+
+        if segment_start_flag == 0:
+            SegAllFeat = featureSet
+            segment_start_flag = 1
+        else:
+            SegAllFeat = np.vstack((SegAllFeat, featureSet))
+
+        start_seg = start_seg + overlappiong
+
+    if segment_start_flag == 1:
+        #print(SegAllFeat.shape)
+        SegAllFeat = normalize(SegAllFeat, norm='l2', axis=0)
+
+    #print(SegAllFeat.shape)
+    if flag_start_all == 0:
+        All = SegAllFeat
+        flag_start_all = 1
+    else:
+        All = np.vstack((All, SegAllFeat))
+
+    return All
+
+'''
+Extract specified amount of features from an audio file
+'''
+def function_FeatureExtract1(audiofile, NumofFeatures):
+    extension = '.wav'
+    flag_start_all = 0
+    flag_Y_start = 0
+    All = np.array([])
+    NumofFeaturetoUse = NumofFeatures #needs to be reassigned, takes two parameters
+    ListOfFrame2Vec = np.empty((0, frame_number, NumofFeaturetoUse))
+    audio, s_rate = librosa.load(audiofile, sr=sample_rate)
+    segment_start_flag = 0
+    start_seg = 0
+    while (start_seg + segment_length) < len(audio):
+        flag = 1
+        sound1 = audio[start_seg:(start_seg + segment_length)]
+
+        featureSet = function_FeatureExtractfromSinglewindow(sound1, hop_length, sample_rate)
+
+        if segment_start_flag == 0:
+            SegAllFeat = featureSet
+            segment_start_flag = 1
+        else:
+            SegAllFeat = np.vstack((SegAllFeat, featureSet))
+
+        start_seg = start_seg + overlappiong
+
+    if segment_start_flag == 1:
+        #print(SegAllFeat.shape)
+        SegAllFeat = normalize(SegAllFeat, norm='l2', axis=0)
+
+    #print(SegAllFeat.shape)
+    if flag_start_all == 0:
+        All = SegAllFeat
+        flag_start_all = 1
+    else:
+        All = np.vstack((All, SegAllFeat))
+
+    return All
+
+######################################################################
+
+def h_a_function_FeatureExtract3(InputFolderName):
+    X = function_FeatureExtract1(InputFolderName, NumofFeaturetoUse)
+    y_pred = model.predict(X)
+    print(y_pred)
+    x = maxima(list(y_pred[0]))
+    return x
+
+def h_a_classifier_eval(emotionFolders):
+    print('Predicted with overall classifier: ' + final_filepath)
+
+    correct = 0
+    incorrect = 0
+    for emotionFolder in emotionFolders:
+        if 'Happy' in emotionFolder: val = 0
+        elif 'Angry' in emotionFolder: val = 1
+
+        for emotionfile in os.listdir(emotionFolder):
+            cond1 = 'deamp_' not in emotionfile and 'WetDry_' not in emotionfile
+            cond2 = 'noise' not in emotionfile
+            cond4 = emotionfile[0] != '.'
+            if cond2 and cond4 and cond1:
+                # print(correct+incorrect)
+                x = h_a_function_FeatureExtract3(InputFolderName=emotionFolder+emotionfile)
+                if(x == val): correct += 1
+                else: incorrect += 1
+        
+    return correct/(correct+incorrect)
+
 
 def predict_cnn(model):
     y_pred = []
@@ -171,8 +439,8 @@ def predict_cnn(model):
     print('false negative ' + str(fn))
     print('true negative ' + str(tn))
 
+prefix = 'C://Users//yg9ca//Documents//'
+final_filepath = prefix + 'modules//Checkpoint_H_A_neurons_4096_filters_256_dropout_0.2_epoch_50000.hdf5'
 
-final_filepath = prefix + \
-    'modules//Checkpoint_H_A_neurons_4096_filters_512_dropout_0.2_epoch_50000.hdf5'
 model = load_model(final_filepath)
-predict_cnn(model)
+h_a_classifier_eval([test_Happy])
