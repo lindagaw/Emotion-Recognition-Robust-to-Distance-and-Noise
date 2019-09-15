@@ -301,27 +301,41 @@ def extract_feats_single_wav(npy_path, audiofile):
     return All
 
 
-allnoised = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//'
-allnoised_npy = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//npy//'
+allnoised_happy = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//Happy//'
+allnoised_happy_npy = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//npy//Happy_npy//'
+allnoised_angry = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//Angry//'
+allnoised_angry_npy = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//npy//Angry_npy//'
+allnoised_neutral = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//Neutral//'
+allnoised_neutral_npy = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//npy//Neutral_npy//'
+allnoised_sad = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//Sad//'
+allnoised_sad_npy = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//npy//Sad_npy//'
+allnoised_other = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//Other//'
+allnoised_other_npy = '..//..//..//Datasets//padded_deamplified_allnoised_reverberated//npy//Other_npy//'
 
-homenoised = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//'
-homenoised_npy = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//npy//'
+allnoised = [allnoised_happy, allnoised_angry, allnoised_neutral, allnoised_sad, allnoised_other]
+allnoised_npy = [allnoised_happy_npy, allnoised_angry_npy,
+                 allnoised_neutral_npy, allnoised_sad_npy, allnoised_other_npy]
 
+homenoised_happy = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//Happy//'
+homenoised_happy_npy = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//npy//Happy_npy//'
+homenoised_angry = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//Angry//'
+homenoised_angry_npy = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//npy//Angry_npy//'
+homenoised_neutral = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//Neutral//'
+homenoised_neutral_npy = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//npy//Neutral_npy//'
+homenoised_sad = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//Sad//'
+homenoised_sad_npy = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//npy//Sad_npy//'
+homenoised_other = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//Other//'
+homenoised_other_npy = '..//..//..//Datasets//padded_deamplified_homenoised_reverberated//npy//Other_npy//'
 
-for audio in os.listdir(homenoised):
+homenoised = [homenoised_happy, homenoised_angry, homenoised_neutral, homenoised_sad, homenoised_other]
+homenoised_npy = [homenoised_happy_npy, homenoised_angry_npy,
+                  homenoised_neutral_npy, homenoised_sad_npy, homenoised_other_npy]
+
+for audio in os.listdir(homenoised[0]):
     if not audio.endswith('.wav') or audio[0] == '.': continue
     else:
         audio = homenoised + audio
-        extract_feats_single_wav(homenoised_npy, audio)
+        extract_feats_single_wav(homenoised_npy[0], audio)
         print(audio)
         break
 
-
-for audio in os.listdir(allnoised):
-    if not audio.endswith('.wav') or audio[0] == '.':
-        continue
-    else:
-        audio = allnoised + audio
-        extract_feats_single_wav(allnoised_npy, audio)
-        print(audio)
-        break
