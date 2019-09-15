@@ -237,8 +237,7 @@ def function_FeatureExtractfromSinglewindow(y, hop_length, sr):
     ############### pitch at certain frame
     pitches, magnitudes = librosa.core.piptrack(
         y=y, sr=sr, fmin=75, fmax=8000, n_fft=hop_length*2, hop_length=hop_length)
-    p = [pitches[magnitudes[:, i].argmax(), i]
-         for i in range(0, pitches.shape[1])]
+    p = [pitches[magnitudes[:, i].argmax(), i]for i in range(0, pitches.shape[1])]
     pitch0 = np.array(p)  # shape (305,)
     pitch = np.transpose(pitch0)
     genFeatures = np.hstack((genFeatures, np.amin(pitch, 0)))
