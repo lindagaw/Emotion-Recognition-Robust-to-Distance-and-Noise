@@ -183,7 +183,7 @@ def function_FeatureExtractfromSinglewindow(y, hop_length, sr):
     genFeatures = np.hstack((genFeatures, st.kurtosis(zcr_delta, 0)))
     #print(genFeatures.shape)
 
-    Erms0 = librosa.feature.rmse(
+    Erms0 = librosa.feature.rms(
         y=y, frame_length=hop_length*2, hop_length=hop_length)
     Erms = np.transpose(Erms0)
     genFeatures = np.hstack((genFeatures, np.amin(Erms, 0)))
