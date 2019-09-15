@@ -331,11 +331,18 @@ homenoised = [homenoised_happy, homenoised_angry, homenoised_neutral, homenoised
 homenoised_npy = [homenoised_happy_npy, homenoised_angry_npy,
                   homenoised_neutral_npy, homenoised_sad_npy, homenoised_other_npy]
 
-for audio in os.listdir(homenoised[0]):
-    if not audio.endswith('.wav') or audio[0] == '.': continue
-    else:
-        audio = homenoised[0] + audio
-        extract_feats_single_wav(homenoised_npy[0], audio)
-        print(audio)
-        break
+for index in range(0, 5):
+    for audio in os.listdir(homenoised[index]):
+        if not audio.endswith('.wav') or audio[0] == '.':
+            continue
+        else:
+            audio = homenoised[index] + audio
+            extract_feats_single_wav(homenoised_npy[index], audio)
 
+for index in range(0, 5):
+    for audio in os.listdir(allnoised[index]):
+        if not audio.endswith('.wav') or audio[0] == '.':
+            continue
+        else:
+            audio = allnoised[index] + audio
+            extract_feats_single_wav(allnoised_npy[index], audio)
