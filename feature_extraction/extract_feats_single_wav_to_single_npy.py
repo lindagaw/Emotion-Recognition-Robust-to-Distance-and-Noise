@@ -334,7 +334,7 @@ homenoised_npy = [homenoised_happy_npy, homenoised_angry_npy,
 for audio in os.listdir(homenoised[0]):
     if not audio.endswith('.wav') or audio[0] == '.': continue
     else:
-        audio = homenoised + audio
+        audio = homenoised[0] + audio
         extract_feats_single_wav(homenoised_npy[0], audio)
         print(audio)
         break
