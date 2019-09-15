@@ -333,8 +333,6 @@ homenoised_npy = [homenoised_happy_npy, homenoised_angry_npy,
 # index 0 - happy, index 1 - angry, index 2 - neutral, index 3 - sad, index 4 - other
 
 for index in range(0, 5):
-    if not index == 2 or not index == 3: continue
-
     count = 0
     for audio in os.listdir(allnoised[index]):
         total_length = len(os.listdir(allnoised[index]))
@@ -346,9 +344,8 @@ for index in range(0, 5):
         count += 1
         update_progress(count/total_length)
 
+'''
 for index in range(0, 5):
-    if not index == 2 or not index == 3: continue
-
     count = 0
     for audio in os.listdir(homenoised[index]):
         total_length = len(os.listdir(homenoised[index]))
@@ -359,3 +356,4 @@ for index in range(0, 5):
             extract_feats_single_wav(homenoised_npy[index], audio)
         count += 1
         update_progress(count/total_length)
+'''
