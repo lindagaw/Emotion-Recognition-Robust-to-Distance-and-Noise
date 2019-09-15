@@ -297,7 +297,7 @@ def extract_feats_single_wav(npy_path, audiofile):
     audio_npy = npy_path + audio_npy
     All = float_compatible(All)
     print(All.shape)
-    np.save(audio_npy, All)
+    #np.save(audio_npy, All)
     return All
 
 
@@ -313,6 +313,8 @@ for audio in os.listdir(homenoised):
     else:
         audio = homenoised + audio
         extract_feats_single_wav(homenoised_npy, audio)
+        print(audio)
+        break
 
 
 for audio in os.listdir(allnoised):
@@ -321,3 +323,5 @@ for audio in os.listdir(allnoised):
     else:
         audio = allnoised + audio
         extract_feats_single_wav(allnoised_npy, audio)
+        print(audio)
+        break
