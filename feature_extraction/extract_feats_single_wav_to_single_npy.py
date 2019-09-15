@@ -296,8 +296,7 @@ def extract_feats_single_wav(npy_path, audiofile):
     audio_npy = (audiofile[:len(audiofile)-4] + '.npy').split('//')[len((audiofile[:len(audiofile)-4] + '.npy').split('//'))-1]
     audio_npy = npy_path + audio_npy
     All = float_compatible(All)
-    print(All.shape)
-    #np.save(audio_npy, All)
+    np.save(audio_npy, All)
     return All
 
 
@@ -332,17 +331,17 @@ homenoised_npy = [homenoised_happy_npy, homenoised_angry_npy,
                   homenoised_neutral_npy, homenoised_sad_npy, homenoised_other_npy]
 
 for index in range(0, 5):
-    for audio in os.listdir(homenoised[index]):
-        if not audio.endswith('.wav') or audio[0] == '.':
-            continue
-        else:
-            audio = homenoised[index] + audio
-            extract_feats_single_wav(homenoised_npy[index], audio)
-
-for index in range(0, 5):
     for audio in os.listdir(allnoised[index]):
         if not audio.endswith('.wav') or audio[0] == '.':
             continue
         else:
             audio = allnoised[index] + audio
             extract_feats_single_wav(allnoised_npy[index], audio)
+
+for index in range(0, 5):
+    for audio in os.listdir(homenoised[index]):
+        if not audio.endswith('.wav') or audio[0] == '.':
+            continue
+        else:
+            audio = homenoised[index] + audio
+            extract_feats_single_wav(homenoised_npy[index], audio)
