@@ -301,11 +301,11 @@ def extract_feats_single_wav(npy_path, audiofile):
     return All
 
 
-allnoised = '..//Datasets//padded_deamplified_allnoised_reverberated//'
-allnoised_npy = '..//Datasets//padded_deamplified_allnoised_reverberated//npy//'
+allnoised = '~//wrk//Datasets//padded_deamplified_allnoised_reverberated//'
+allnoised_npy = '~//wrk//Datasets//padded_deamplified_allnoised_reverberated//npy//'
 
-homenoised = '..//Datasets//padded_deamplified_homenoised_reverberated//'
-homenoised_npy = '..//Datasets//padded_deamplified_homenoised_reverberated//npy'
+homenoised = '~//wrk//Datasets//padded_deamplified_homenoised_reverberated//'
+homenoised_npy = '~//wrk//Datasets//padded_deamplified_homenoised_reverberated//npy//'
 
 
 for audio in os.listdir(homenoised):
