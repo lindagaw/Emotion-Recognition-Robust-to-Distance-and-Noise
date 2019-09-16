@@ -333,7 +333,11 @@ homenoised_npy = [homenoised_happy_npy, homenoised_angry_npy,
 # index 0 - happy, index 1 - angry, index 2 - neutral, index 3 - sad, index 4 - other
 for index in range(0, 5):
     for audio in os.listdir(allnoised[index]):
+        print(audio)
+        print(allnoised[index])
+
         npy_title = allnoised_npy[index] + audio[:len(audio)-3] + '.npy'
+        print(npy_title)
         if path.exists(npy_title):
             print(npy_title + 'already exists. Skipping...')
             continue
@@ -341,8 +345,9 @@ for index in range(0, 5):
             continue
         else:
             audio = allnoised[index] + audio
-            extract_feats_single_wav(allnoised_npy[index], audio)
-
+            #extract_feats_single_wav(allnoised_npy[index], audio)
+        break
+'''
 for index in range(0, 5):
     for audio in os.listdir(homenoised[index]):
         npy_title = homenoised_npy[index] + audio[:len(audio)-3] + '.npy'
@@ -353,4 +358,6 @@ for index in range(0, 5):
             continue
         else:
             audio = homenoised[index] + audio
-            extract_feats_single_wav(homenoised_npy[index], audio)
+            #extract_feats_single_wav(homenoised_npy[index], audio)
+        break
+'''
