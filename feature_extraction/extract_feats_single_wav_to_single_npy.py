@@ -331,33 +331,36 @@ homenoised_npy = [homenoised_happy_npy, homenoised_angry_npy,
 
 
 # index 0 - happy, index 1 - angry, index 2 - neutral, index 3 - sad, index 4 - other
-for index in range(0, 5):
-    for audio in os.listdir(allnoised[index]):
-        print(audio)
-        print(allnoised[index])
 
-        npy_title = allnoised_npy[index] + audio[:len(audio)-4] + '.npy'
-        print(npy_title)
-        if os.path.isfile(npy_title):
-            print(npy_title + 'already exists. Skipping...')
-            continue
-        elif not audio.endswith('.wav') or audio[0] == '.':
-            continue
-        else:
-            audio = allnoised[index] + audio
-            #extract_feats_single_wav(allnoised_npy[index], audio)
-        break
-'''
 for index in range(0, 5):
     for audio in os.listdir(homenoised[index]):
         npy_title = homenoised_npy[index] + audio[:len(audio)-4] + '.npy'
         if os.path.isfile(npy_title):
-            print(npy_title + 'already exists. Skipping...')
+            print(npy_title + ' already exists. Skipping...')
             continue
         elif not audio.endswith('.wav') or audio[0] == '.':
             continue
         else:
             audio = homenoised[index] + audio
-            #extract_feats_single_wav(homenoised_npy[index], audio)
-        break
+            print('creating ' + npy_title)
+            try:
+                extract_feats_single_wav(homenoised_npy[index], audio)
+            except Exception as e: print(e)
+
+'''
+for index in range(0, 5):
+    for audio in os.listdir(allnoised[index]):
+        npy_title = allnoised_npy[index] + audio[:len(audio)-4] + '.npy'
+        if os.path.isfile(npy_title):
+            print(npy_title + ' already exists. Skipping...')
+            continue
+        elif not audio.endswith('.wav') or audio[0] == '.':
+            continue
+        else:
+            audio = allnoised[index] + audio
+            print('creating ' + npy_title)
+            try:
+                extract_feats_single_wav(allnoised_npy[index], audio)
+            except Exception as e: print(e)
+                
 '''
