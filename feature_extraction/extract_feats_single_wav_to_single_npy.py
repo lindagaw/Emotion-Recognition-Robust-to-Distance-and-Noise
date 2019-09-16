@@ -338,7 +338,7 @@ for index in range(0, 5):
 
         npy_title = allnoised_npy[index] + audio[:len(audio)-3] + '.npy'
         print(npy_title)
-        if path.exists(npy_title):
+        if os.path.isfile(npy_title):
             print(npy_title + 'already exists. Skipping...')
             continue
         elif not audio.endswith('.wav') or audio[0] == '.':
@@ -351,7 +351,7 @@ for index in range(0, 5):
 for index in range(0, 5):
     for audio in os.listdir(homenoised[index]):
         npy_title = homenoised_npy[index] + audio[:len(audio)-3] + '.npy'
-        if path.exists(npy_title):
+        if os.path.isfile(npy_title):
             print(npy_title + 'already exists. Skipping...')
             continue
         elif not audio.endswith('.wav') or audio[0] == '.':
