@@ -51,11 +51,24 @@ home_noised_npy = load_feat_directories.homenoised_npy
 home_noised_npy_test = load_feat_directories.homenoised_npy_test
 
 for index in range(0, 5):
-    x = os.path.exists(all_noised_npy[index])
-    print(x)
-    y = os.path.exists(home_noised_npy[index])
-    print(y)
-    print('##################')
+    #x = os.path.exists(all_noised_npy[index])
+    #y = os.path.exists(home_noised_npy[index])
+
+    if not os.path.exists(all_noised_npy[index]):
+        print(all_noised_npy[index] + ' does not exist. Breaking the loop... ')
+    
+    if not os.path.exists(home_noised_npy[index]):
+        print(home_noised_npy[index] + 'does not exist. Breaking the loop... ')
+    
+
+for index in range(0, 5):
+    percent = 0.2
+    partition_directory(all_noised_npy[index], allnoised_npy_test[index], percent)
+
+for index in range(0, 5):
+    percent = 0.2
+    partition_directory(home_noised_npy[index], home_noised_npy_test[index], percent)
+
 '''
 percent = 0.2
 partition_directory(h_directory, h_test, percent)
