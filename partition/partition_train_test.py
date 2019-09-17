@@ -51,15 +51,11 @@ home_noised_npy = load_feat_directories.homenoised_npy
 home_noised_npy_test = load_feat_directories.homenoised_npy_test
 
 for index in range(0, 5):
-    print('ALL')
     x = os.path.exists(all_noised_npy[index])
     print(x)
-    print(all_noised_npy[index])
-    print('HOME')
-    print('y')
     y = os.path.exists(home_noised_npy[index])
-    print(home_noised_npy[index])
-
+    print(y)
+    print('##################')
 '''
 percent = 0.2
 partition_directory(h_directory, h_test, percent)
