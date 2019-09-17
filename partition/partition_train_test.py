@@ -7,7 +7,10 @@ import pandas as pd
 from pysndfx import AudioEffectsChain
 from librosa import load
 import shutil
+import sys
 
+sys.path.insert(0, '..//components//')
+from components import load_feat_directories
 
 def delete_directory(path):
     shutil.rmtree(path, ignore_errors=True)
@@ -38,6 +41,22 @@ def partition_directory(path, new_path, percent):
     print(str(percent) + ' of the data is in training set')
     print('# of training data = ' + str(test_set.shape))
 
+# allnoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
+# homenoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
+
+all_noised_npy = load_feat_directories.allnoised_npy
+allnoised_npy_test = load_feat_directories.allnoised_npy_test
+
+home_noised_npy = load_feat_directories.homenoised_npy
+home_noised_npy_test = load_feat_directories.homenoised_npy_test
+
+for index in range(0, 5):
+    print('ALL')
+    x = os.path.exists(all_noised_npy[index])
+    print(all_noised_npy[index])
+    print('HOME')
+    y = os.path.exists(home_noised_npy[index])
+    print(home_noised_npy[index])
 
 '''
 percent = 0.2
