@@ -38,8 +38,9 @@ def partition_directory(path, new_path, percent):
             pass
 
     print('# of training data + # of testing data = ' + str(total))
-    print(str(percent) + ' of the data is in training set')
-    print('# of training data = ' + str(test_set.shape))
+    print(str(1 - percent) + ' of the data is in the training set')
+    print(str(percent) + ' of the data is in the training testing set')
+    print('# of testing data = ' + str(test_set.shape))
 
 # allnoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
 # homenoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
