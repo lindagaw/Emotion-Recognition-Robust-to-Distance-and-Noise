@@ -9,8 +9,8 @@ from librosa import load
 import shutil
 import sys
 
-sys.path.insert(0, '..//components//')
-from components import load_feat_directories
+sys.path.insert(1, '..//components//')
+import load_feat_directories
 
 def delete_directory(path):
     shutil.rmtree(path, ignore_errors=True)
@@ -53,8 +53,10 @@ home_noised_npy_test = load_feat_directories.homenoised_npy_test
 for index in range(0, 5):
     print('ALL')
     x = os.path.exists(all_noised_npy[index])
+    print(x)
     print(all_noised_npy[index])
     print('HOME')
+    print('y')
     y = os.path.exists(home_noised_npy[index])
     print(home_noised_npy[index])
 
