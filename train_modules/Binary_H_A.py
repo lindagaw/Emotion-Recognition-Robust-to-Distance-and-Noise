@@ -71,6 +71,9 @@ from keras import backend
 #warnings.filterwarnings('ignore')
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+sys.path.insert(1, '//components//')
+import load_feat_directories
+
 sample_rate = 44100
 frame_number = 48
 hop_length = 441  # frame size= 2 * hop
@@ -106,7 +109,24 @@ def update_progress(progress):
     text = "Progress: [{0}] {1:.1f}%".format( "#" * block + "-" * (bar_length - block), progress * 100)
     print(text)
 
-prefix = '..//..//'
+
+all_noised_npy = load_feat_directories.allnoised_npy
+allnoised_npy_test = load_feat_directories.allnoised_npy_test
+
+home_noised_npy = load_feat_directories.homenoised_npy
+home_noised_npy_test = load_feat_directories.homenoised_npy_test
+
+for index in range(0, 5):
+    #x = os.path.exists(all_noised_npy[index])
+    #y = os.path.exists(home_noised_npy[index])
+
+    if not os.path.exists(all_noised_npy[index]):
+        print(all_noised_npy[index] + ' does not exist. Breaking the loop... ')
+
+    if not os.path.exists(home_noised_npy[index]):
+        print(home_noised_npy[index] + 'does not exist. Breaking the loop... ')
+
+'''
 h_feature_vector = np.load(prefix + 'Features//h_feature_vector_48.npy')
 h_label_vector = np.load(prefix + 'Features//h_label_vector_48.npy')
 a_feature_vector = np.load(prefix + 'Features//a_feature_vector_48.npy')
@@ -142,6 +162,7 @@ label_training = np.vstack((h_label_vector, a_label_vector))
 # Load testing npy files
 featureSet_testing = np.vstack((h_feature_vector_test, a_feature_vector_test))
 label_testing = np.vstack((h_label_vector_test, a_label_vector_test))
+'''
 
 def float_compatible(input_np):
 

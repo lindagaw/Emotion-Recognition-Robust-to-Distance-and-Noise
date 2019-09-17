@@ -61,7 +61,7 @@ for index in range(0, 5):
     if not os.path.exists(home_noised_npy[index]):
         print(home_noised_npy[index] + 'does not exist. Breaking the loop... ')
     
-
+'''
 for index in range(0, 5):
     percent = 0.2
     partition_directory(all_noised_npy[index], allnoised_npy_test[index], percent)
@@ -69,12 +69,12 @@ for index in range(0, 5):
 for index in range(0, 5):
     percent = 0.2
     partition_directory(home_noised_npy[index], home_noised_npy_test[index], percent)
+'''
 
-'''
-percent = 0.2
-partition_directory(h_directory, h_test, percent)
-partition_directory(a_directory, a_test, percent)
-partition_directory(n_directory, n_test, percent)
-partition_directory(s_directory, s_test, percent)
-partition_directory(o_directory, o_test, percent)
-'''
+#percent = 0.2
+#partition_directory(h_directory, h_test, percent)
+#partition_directory(a_directory, a_test, percent)
+#partition_directory(n_directory, n_test, percent)
+#partition_directory(s_directory, s_test, percent)
+#partition_directory(o_directory, o_test, percent)
+
