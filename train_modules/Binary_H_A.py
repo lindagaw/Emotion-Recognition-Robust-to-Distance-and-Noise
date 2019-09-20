@@ -82,7 +82,7 @@ segment_pad = int(sample_rate * 0.02)     # 0.02
 overlapping = int(sample_rate * 0.1)   # 0.1
 
 classes = 2
-NumofFeaturetoUse = 100
+NumofFeaturetoUse = 272
 n_neurons = 4096
 dense_layers = 1
 num_layers = 3
@@ -188,7 +188,7 @@ def comprise_vector(path):
         current_vec = list(np.load(path + fname))
         vec_to_return.append(current_vec)
 
-    return np.array(vec_to_return)
+    return np.array(vec_to_return[20])
 
 def comprise_label(feature_vector, label):
     length = len(list(feature_vector))
@@ -221,7 +221,7 @@ def float_compatible(input_np):
     return input_np
 
 train_data = float_compatible((featureSet_training).astype(np.float32))
-eval_data = float_compatible((featureSet_testing).astype(np.float32))
+#eval_data = float_compatible((featureSet_testing).astype(np.float32))
 
 adam = optimizers.Adam(lr = 3e-6, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 0, amsgrad = True)
 sgd = optimizers.SGD(lr = 0.01, decay = 1e-6, momentum = 0.9, nesterov = True)
@@ -238,12 +238,14 @@ featureSet = np.split(featureSet, np.array([NumofFeaturetoUse]), axis = 2)[0]
 print('training data: ' + str(featureSet.shape))
 print('training label: ' + str(Label.shape))
 
+'''
 featureSet_val = eval_data
 Label_val = label_testing
 featureSet_val = np.split(featureSet_val, np.array([NumofFeaturetoUse]), axis = 2)[0]
 
 print('evaluation data: ' + str(featureSet_val.shape))
 print('evaluation label: ' + str(Label_val.shape))
+'''
 
 def record(str_message, log_file):
     str_message = str_message + '\n'
@@ -289,7 +291,7 @@ def create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes,
 
     return model
 
-def train_cnn():
+def train_cnn(prefix):
     
     save_to_path = prefix + str(num_layers) + "_Layer(s)//"
 
@@ -346,5 +348,5 @@ title = 'H_A_neurons_' + str(n_neurons) + '_filters_' + str(nbindex) + '_dropout
 final_filepath = prefix + str(num_layers) + "_Layer(s)//Final_" + title + ".hdf5"
 
 #model = load_model(final_filepath)
-model = train_cnn()
-predict_cnn(model)
+model = train_cnn('..//..//modules//')
+#predict_cnn(model)
