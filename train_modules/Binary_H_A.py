@@ -235,7 +235,7 @@ nadam = optimizers.Nadam(lr = 0.002, beta_1 = 0.9, beta_2 = 0.999, epsilon = Non
 
 featureSet = train_data
 Label = label_training
-featureSet = np.split(featureSet, np.array([NumofFeaturetoUse]), axis = 2)[0]
+#featureSet = np.split(featureSet, np.array([NumofFeaturetoUse]), axis = 2)[0]
 
 print('training data: ' + str(featureSet.shape))
 print('training label: ' + str(Label.shape))
