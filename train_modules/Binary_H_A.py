@@ -160,9 +160,9 @@ def comprise_label(feature_vector, label):
 for index in range(0, 5):
 
     if not os.path.exists(all_noised_npy[index]):
-        path = all_noised_npy[index]
         print(all_noised_npy[index] + ' does not exist.')
     else:
+        path = all_noised_npy[index]
         if index == 0:
             h_feature_vector_all = comprise_vector(path)
             h_label_vector_all = comprise_label(h_feature_vector_all, index)
@@ -180,9 +180,9 @@ for index in range(0, 5):
             o_label_vector_all = comprise_label(o_feature_vector_all, index)
 
     if not os.path.exists(home_noised_npy[index]):
-        path = home_noised_npy[index]
         print(home_noised_npy[index] + 'does not exist.')
     else:
+        path = home_noised_npy[index]
         if index == 0:
             h_feature_vector_home = comprise_vector(path)
             h_label_vector_home = comprise_label(h_feature_vector_home, index)
