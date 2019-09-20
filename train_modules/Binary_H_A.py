@@ -135,6 +135,28 @@ allnoised_npy_test = load_feat_directories.allnoised_npy_test
 home_noised_npy = load_feat_directories.homenoised_npy
 home_noised_npy_test = load_feat_directories.homenoised_npy_test
 
+
+def comprise_vector(path):
+
+    vec_to_return = []
+
+    for fname in os.listdir(path):
+        if not fname.endswith('.npy'):
+            continue
+
+        current_vec = list(np.load(path + fname))
+        vec_to_return.append(current_vec)
+
+    return np.array(vec_to_return[20])
+
+
+def comprise_label(feature_vector, label):
+    length = len(list(feature_vector))
+    label_vec_to_ret = [label] * length
+
+    return np.array(label_vec_to_ret)
+
+
 for index in range(0, 5):
 
     if not os.path.exists(all_noised_npy[index]):
@@ -176,26 +198,6 @@ for index in range(0, 5):
         else:
             o_feature_vector_home = comprise_vector(path)
             o_label_vector_home = comprise_label(o_feature_vector_home, index)
-
-def comprise_vector(path):
-    
-    vec_to_return = []
-
-    for fname in os.listdir(path):
-        if not fname.endswith('.npy'):
-            continue
-        
-        current_vec = list(np.load(path + fname))
-        vec_to_return.append(current_vec)
-
-    return np.array(vec_to_return[20])
-
-def comprise_label(feature_vector, label):
-    length = len(list(feature_vector))
-    label_vec_to_ret = [label] * length
-
-    return np.array(label_vec_to_ret)
-
 
 # Load training npy files
 featureSet_training = np.vstack((h_feature_vector_all, a_feature_vector_all))
