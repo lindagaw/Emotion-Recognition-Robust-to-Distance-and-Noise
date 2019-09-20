@@ -71,7 +71,7 @@ from keras import backend
 #warnings.filterwarnings('ignore')
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-sys.path.insert(1, '//components//')
+sys.path.insert(1, '..//components//')
 import load_feat_directories
 
 sample_rate = 44100
@@ -126,43 +126,88 @@ for index in range(0, 5):
     if not os.path.exists(home_noised_npy[index]):
         print(home_noised_npy[index] + 'does not exist. Breaking the loop... ')
 
-'''
-h_feature_vector = np.load(prefix + 'Features//h_feature_vector_48.npy')
-h_label_vector = np.load(prefix + 'Features//h_label_vector_48.npy')
-a_feature_vector = np.load(prefix + 'Features//a_feature_vector_48.npy')
-a_label_vector = np.load(prefix + 'Features//a_label_vector_48.npy')
-n_feature_vector = np.load(prefix + 'Features//n_feature_vector_48.npy')
-n_label_vector = np.load(prefix + 'Features//n_label_vector_48.npy')
-s_feature_vector = np.load(prefix + 'Features//s_feature_vector_48.npy')
-s_label_vector = np.load(prefix + 'Features//s_label_vector_48.npy')
+# allnoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
+# homenoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
 
-h_feature_vector_test = np.load(prefix + 'Features//h_feature_vector_test_48.npy')
-h_label_vector_test = np.load(prefix + 'Features//h_label_vector_test_48.npy')
-a_feature_vector_test = np.load(prefix + 'Features//a_feature_vector_test_48.npy')
-a_label_vector_test = np.load(prefix + 'Features//a_label_vector_test_48.npy')
-n_feature_vector_test = np.load(prefix + 'Features//n_feature_vector_test_48.npy')
-n_label_vector_test = np.load(prefix + 'Features//n_label_vector_test_48.npy')
-s_feature_vector_test = np.load(prefix + 'Features//s_feature_vector_test_48.npy')
-s_label_vector_test = np.load(prefix + 'Features//s_label_vector_test_48.npy')
+all_noised_npy = load_feat_directories.allnoised_npy
+allnoised_npy_test = load_feat_directories.allnoised_npy_test
 
-h_label_vector[h_label_vector == 0] = 0
-a_label_vector[a_label_vector == 1] = 1
-h_label_vector_test[h_label_vector_test == 0] = 0
-a_label_vector_test[a_label_vector_test == 1] = 1
+home_noised_npy = load_feat_directories.homenoised_npy
+home_noised_npy_test = load_feat_directories.homenoised_npy_test
 
-h_label_vector = to_categorical(h_label_vector, num_classes = 2)
-a_label_vector = to_categorical(a_label_vector, num_classes = 2)
-h_label_vector_test = to_categorical(h_label_vector_test, num_classes = 2)
-a_label_vector_test = to_categorical(a_label_vector_test, num_classes = 2)
+for index in range(0, 5):
+
+    if not os.path.exists(all_noised_npy[index]):
+        path = all_noised_npy[index]
+        print(all_noised_npy[index] + ' does not exist.')
+    else:
+        if index == 0:
+            h_feature_vector_all = comprise_vector(path)
+            h_label_vector_all = comprise_label(h_feature_vector_all, index)
+        elif index == 1:
+            a_feature_vector_all = comprise_vector(path)
+            a_label_vector_all = comprise_label(a_feature_vector_all, index)
+        elif index == 2:
+            n_feature_vector_all = comprise_vector(path)
+            n_label_vector_all = comprise_label(n_feature_vector_all, index)
+        elif index == 3:
+            s_feature_vector_all = comprise_vector(path)
+            s_label_vector_all = comprise_label(s_feature_vector_all, index)
+        else:
+            o_feature_vector_all = comprise_vector(path)
+            o_label_vector_all = comprise_label(o_feature_vector_all, index)
+
+    if not os.path.exists(home_noised_npy[index]):
+        path = home_noised_npy[index]
+        print(home_noised_npy[index] + 'does not exist.')
+    else:
+        if index == 0:
+            h_feature_vector_home = comprise_vector(path)
+            h_label_vector_home = comprise_label(h_feature_vector_home, index)
+        elif index == 1:
+            a_feature_vector_home = comprise_vector(path)
+            a_label_vector_home = comprise_label(a_feature_vector_home, index)
+        elif index == 2:
+            n_feature_vector_home = comprise_vector(path)
+            n_label_vector_home = comprise_label(n_feature_vector_home, index)
+        elif index == 3:
+            s_feature_vector_home = comprise_vector(path)
+            s_label_vector_home = comprise_label(s_feature_vector_home, index)
+        else:
+            o_feature_vector_home = comprise_vector(path)
+            o_label_vector_home = comprise_label(o_feature_vector_home, index)
+
+def comprise_vector(path):
+    
+    vec_to_return = []
+
+    for fname in os.listdir(path):
+        if not fname.endswith('.npy'):
+            continue
+        
+        current_vec = list(np.load(path + fname))
+        vec_to_return.append(current_vec)
+
+    return np.array(vec_to_return)
+
+def comprise_label(feature_vector, label):
+    length = len(list(feature_vector))
+    label_vec_to_ret = [label] * length
+
+    return np.array(label_vec_to_ret)
+
 
 # Load training npy files
-featureSet_training = np.vstack((h_feature_vector, a_feature_vector))
-label_training = np.vstack((h_label_vector, a_label_vector))
+featureSet_training = np.vstack((h_feature_vector_all, a_feature_vector_all))
+label_training = np.vstack((h_label_vector_all, a_label_vector_all))
 
+
+'''
 # Load testing npy files
 featureSet_testing = np.vstack((h_feature_vector_test, a_feature_vector_test))
 label_testing = np.vstack((h_label_vector_test, a_label_vector_test))
 '''
+
 
 def float_compatible(input_np):
 
@@ -255,21 +300,13 @@ def train_cnn():
         os.mkdir(save_to_path)
 
     X, X_test, Y, Y_test= train_test_split(featureSet, Label, test_size = 0.25, shuffle = True)
-
     model = create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes, dense_layers)
-
     checkpoint = ModelCheckpoint(checkpoint_filepath, monitor = 'val_acc', verbose = 0, save_best_only = True, mode = 'auto')
-
     early_stopping_monitor = EarlyStopping(patience = 100)
-
     callbacks_list = [checkpoint, early_stopping_monitor]
-
     model.fit(X, Y, nb_epoch = n_epoch, batch_size = n_batch,  callbacks = callbacks_list, validation_data = (X_test, Y_test), verbose = 1)
-
     model.save_weights(final_filepath)
-
     model.load_weights(checkpoint_filepath)
-
     return model
 
 def predict_cnn(model):
@@ -304,23 +341,10 @@ def predict_cnn(model):
     print('false negative ' + str(fn))
     print('true negative ' + str(tn))
 
-title = 'H_A_neurons_' + str(n_neurons) + '_filters_' + str(
-    nbindex) + '_dropout_' + str(dropout) + '_epoch_' + str(n_epoch)
+title = 'H_A_neurons_' + str(n_neurons) + '_filters_' + str(nbindex) + '_dropout_' + str(dropout) + '_epoch_' + str(n_epoch)
 
 final_filepath = prefix + str(num_layers) + "_Layer(s)//Final_" + title + ".hdf5"
+
 #model = load_model(final_filepath)
 model = train_cnn()
 predict_cnn(model)
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
