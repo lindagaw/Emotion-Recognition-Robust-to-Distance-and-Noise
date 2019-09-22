@@ -21,7 +21,7 @@ def partition_directory(path, new_path, percent):
         os.mkdir(new_path)
     else:
         delete_directory(new_path)
-        os.makdir(new_path)
+        os.mkdir(new_path)
 
     total = len(os.listdir(path))
     test_number = int(total * percent)
@@ -29,17 +29,17 @@ def partition_directory(path, new_path, percent):
 
     for index in test_set:
         try:
-            if os.listdir(path)[index].endswith('.wav'):
+            if os.listdir(path)[index].endswith('.npy'):
                 original_location = path + os.listdir(path)[index]
                 new_location = new_path + os.listdir(path)[index]
                 os.rename(original_location, new_location)
                 print(new_location)
+                
         except:
             pass
 
+    print('from the path: ' + path)
     print('# of training data + # of testing data = ' + str(total))
-    print(str(1 - percent) + ' of the data is in the training set')
-    print(str(percent) + ' of the data is in the training testing set')
     print('# of testing data = ' + str(test_set.shape))
 
 # allnoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
@@ -61,7 +61,7 @@ for index in range(0, 5):
     if not os.path.exists(home_noised_npy[index]):
         print(home_noised_npy[index] + 'does not exist. Breaking the loop... ')
     
-'''
+
 for index in range(0, 5):
     percent = 0.2
     partition_directory(all_noised_npy[index], allnoised_npy_test[index], percent)
@@ -69,7 +69,6 @@ for index in range(0, 5):
 for index in range(0, 5):
     percent = 0.2
     partition_directory(home_noised_npy[index], home_noised_npy_test[index], percent)
-'''
 
 #percent = 0.2
 #partition_directory(h_directory, h_test, percent)

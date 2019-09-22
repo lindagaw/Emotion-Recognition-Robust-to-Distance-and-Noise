@@ -145,7 +145,6 @@ def comprise_label(feature_vector, label):
         label_vec_to_ret.append(current_label)
     label_vec_to_ret = np.array(label_vec_to_ret)
 
-    print(label_vec_to_ret.shape)
     return label_vec_to_ret
 
 for index in [0, 1]:
@@ -370,6 +369,6 @@ title = 'test'
 prefix = '..//..//modules//'
 final_filepath = prefix + str(num_layers) + "_Layer(s)//Final_" + title + ".hdf5"
 
-model = load_model(final_filepath)
-model = train_cnn('..//..//modules//')
-predict_cnn(model)
+#model = load_model(final_filepath)
+#model = train_cnn('..//..//modules//')
+#predict_cnn(model)
