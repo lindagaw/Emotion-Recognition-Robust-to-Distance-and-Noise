@@ -108,6 +108,14 @@ def update_progress(progress):
     text = "Progress: [{0}] {1:.1f}%".format( "#" * block + "-" * (bar_length - block), progress * 100)
     print(text)
 
+# allnoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
+# homenoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
+all_noised_npy = load_feat_directories.allnoised_npy
+all_noised_npy_test = load_feat_directories.allnoised_npy_test
+home_noised_npy = load_feat_directories.homenoised_npy
+home_noised_npy_test = load_feat_directories.homenoised_npy_test
+
+
 for index in range(0, 5):
     #x = os.path.exists(all_noised_npy[index])
     #y = os.path.exists(home_noised_npy[index])
@@ -117,15 +125,6 @@ for index in range(0, 5):
 
     if not os.path.exists(home_noised_npy[index]):
         print(home_noised_npy[index] + 'does not exist. Breaking the loop... ')
-
-# allnoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
-# homenoised_npy[0, 1, 2, 3, 4] ==> H, A, N, S, O
-
-all_noised_npy = load_feat_directories.allnoised_npy
-all_noised_npy_test = load_feat_directories.allnoised_npy_test
-
-home_noised_npy = load_feat_directories.homenoised_npy
-home_noised_npy_test = load_feat_directories.homenoised_npy_test
 
 
 def comprise_vector(path):
