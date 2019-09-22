@@ -1,4 +1,3 @@
-
 import random
 import os
 import shutil
@@ -138,16 +137,16 @@ home_noised_npy_test = load_feat_directories.homenoised_npy_test
 
 def comprise_vector(path):
 
-    vec_to_return = []
+    vec_to_return = np.array([])
 
     for fname in os.listdir(path):
         if not fname.endswith('.npy'):
             continue
 
-        current_vec = list(np.load(path + fname))
-        vec_to_return.append(current_vec)
+        current_vec = np.load(path + fname)
+        vec_to_return = np.vstack((vec_to_return, current_vec))
 
-    return np.array(vec_to_return[20])
+    return vec_to_return
 
 
 def comprise_label(feature_vector, label):
