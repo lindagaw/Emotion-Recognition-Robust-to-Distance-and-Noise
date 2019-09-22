@@ -119,12 +119,17 @@ home_noised_npy_test = load_feat_directories.homenoised_npy_test
 for index in range(0, 5):
     #x = os.path.exists(all_noised_npy[index])
     #y = os.path.exists(home_noised_npy[index])
-
     if not os.path.exists(all_noised_npy[index]):
         print(all_noised_npy[index] + ' does not exist. Breaking the loop... ')
+        break
+    else:
+        print(all_noised_npy[index] + ' exists. Continuing... ')
 
     if not os.path.exists(home_noised_npy[index]):
         print(home_noised_npy[index] + 'does not exist. Breaking the loop... ')
+        break
+    else:
+        print(home_noised_npy[index] + ' exists. Continuing... ')
 
 
 def comprise_vector(path):
@@ -132,14 +137,13 @@ def comprise_vector(path):
     for fname in os.listdir(path):
         if not fname.endswith('.npy'):
             continue
-        print(fname)
+
         current_vec = np.load(path + fname)
         if len(list(vec_to_return)) == 0:
             vec_to_return = current_vec
         else:
             vec_to_return = np.vstack((vec_to_return, current_vec))
-        if len(list(vec_to_return)) == 2:
-            break
+        print(len(list(vec_to_return)))
     return vec_to_return
 
 def comprise_label(feature_vector, label):
@@ -151,8 +155,7 @@ def comprise_label(feature_vector, label):
             label_vec_to_ret = current
         else:
             label_vec_to_ret = np.vstack((label_vec_to_ret, current))
-        if len(list(label_vec_to_ret)) == 2:
-            break
+        print(len(list(label_vec_to_ret)))
     return label_vec_to_ret
 
 
