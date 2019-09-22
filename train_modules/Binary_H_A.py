@@ -128,23 +128,18 @@ for index in range(0, 5):
 
 
 def comprise_vector(path):
-
     vec_to_return = np.array([])
-
     for fname in os.listdir(path):
         if not fname.endswith('.npy'):
             continue
         print(fname)
         current_vec = np.load(path + fname)
-
         if len(list(vec_to_return)) == 0:
             vec_to_return = current_vec
         else:
             vec_to_return = np.vstack((vec_to_return, current_vec))
-
-        if len(list(vec_to_return)) == 10:
+        if len(list(vec_to_return)) == 2:
             break
-
     return vec_to_return
 
 def comprise_label(feature_vector, label):
@@ -156,10 +151,8 @@ def comprise_label(feature_vector, label):
             label_vec_to_ret = current
         else:
             label_vec_to_ret = np.vstack((label_vec_to_ret, current))
-
-        if len(list(label_vec_to_ret)) == 10:
+        if len(list(label_vec_to_ret)) == 2:
             break
-
     return label_vec_to_ret
 
 
@@ -183,7 +176,7 @@ for index in [0, 1]:
         else:
             o_feature_vector_all = comprise_vector(path)
             o_label_vector_all = comprise_label(o_feature_vector_all, index)
-
+    '''
     if not os.path.exists(home_noised_npy[index]):
         print(home_noised_npy[index] + 'does not exist.')
     else:
@@ -203,6 +196,7 @@ for index in [0, 1]:
         else:
             o_feature_vector_home = comprise_vector(path)
             o_label_vector_home = comprise_label(o_feature_vector_home, index)
+    '''
 
 for index in [0, 1]:
 
@@ -226,6 +220,7 @@ for index in [0, 1]:
             o_feature_vector_all_test = comprise_vector(path)
             o_label_vector_all_test = comprise_label(o_feature_vector_all_test, index)
 
+    '''
     if not os.path.exists(home_noised_npy_test[index]):
         print(home_noised_npy_test[index] + 'does not exist.')
     else:
@@ -245,6 +240,7 @@ for index in [0, 1]:
         else:
             o_feature_vector_home_test = comprise_vector(path)
             o_label_vector_home_test = comprise_label(o_feature_vector_home_test, index)
+    '''
 
 def float_compatible(input_np):
 
