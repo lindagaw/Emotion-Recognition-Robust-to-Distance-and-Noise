@@ -246,27 +246,31 @@ for index in [0, 1]:
             o_feature_vector_home_test = comprise_vector(path)
             o_label_vector_home_test = comprise_label(o_feature_vector_home_test, index)
 
-# Load training npy files
-featureSet_training = np.vstack((h_feature_vector_all, a_feature_vector_all))
-label_training = np.vstack((h_label_vector_all, a_label_vector_all))
-
-# Load testing npy files
-featureSet_testing = np.vstack((h_feature_vector_all_test, a_feature_vector_all_test))
-label_testing = np.vstack((h_label_vector_all_test, a_label_vector_all_test))
-
 def float_compatible(input_np):
 
     x = np.where(input_np >= np.finfo(np.float32).max)
     for index in range(0, len(x[0])):
         x_position = x[0][index]
-        y_position = x[1][index]      
+        y_position = x[1][index]
         input_np[x_position, y_position] = 0.0
     input_np = np.nan_to_num(input_np)
-        
+
     return input_np
 
-train_data = float_compatible((featureSet_training).astype(np.float32))
-eval_data = float_compatible((featureSet_testing).astype(np.float32))
+# Load training npy files
+featureSet = float_compatible(np.vstack((h_feature_vector_all, a_feature_vector_all)))
+Label = np.vstack((h_label_vector_all, a_label_vector_all))
+#featureSet = np.split(featureSet, np.array([NumofFeaturetoUse]), axis = 2)[0]
+print('training data: ' + str(featureSet.shape))
+print('training label: ' + str(Label.shape))
+
+
+# Load testing npy files
+featureSet_val = float_compatible(np.vstack((h_feature_vector_all_test, a_feature_vector_all_test)))
+Label_val = np.vstack((h_label_vector_all_test, a_label_vector_all_test))
+#featureSet_val = np.split(featureSet_val, np.array([NumofFeaturetoUse]), axis = 2)[0]
+print('evaluation data: ' + str(featureSet_val.shape))
+print('evaluation label: ' + str(Label_val.shape))
 
 adam = optimizers.Adam(lr = 3e-6, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 0, amsgrad = True)
 sgd = optimizers.SGD(lr = 0.01, decay = 1e-6, momentum = 0.9, nesterov = True)
@@ -276,19 +280,6 @@ adadelta = optimizers.Adadelta(lr = 1.0, rho = 0.95, epsilon = None, decay = 0.0
 adamax = optimizers.Adamax(lr = 0.002, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, decay = 0.0)
 nadam = optimizers.Nadam(lr = 0.002, beta_1 = 0.9, beta_2 = 0.999, epsilon = None, schedule_decay = 0.004)
 
-featureSet = train_data
-Label = label_training
-#featureSet = np.split(featureSet, np.array([NumofFeaturetoUse]), axis = 2)[0]
-
-print('training data: ' + str(featureSet.shape))
-print('training label: ' + str(Label.shape))
-
-featureSet_val = eval_data
-Label_val = label_testing
-#featureSet_val = np.split(featureSet_val, np.array([NumofFeaturetoUse]), axis = 2)[0]
-
-print('evaluation data: ' + str(featureSet_val.shape))
-print('evaluation label: ' + str(Label_val.shape))
 
 def record(str_message, log_file):
     str_message = str_message + '\n'
