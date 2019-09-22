@@ -108,13 +108,6 @@ def update_progress(progress):
     text = "Progress: [{0}] {1:.1f}%".format( "#" * block + "-" * (bar_length - block), progress * 100)
     print(text)
 
-
-all_noised_npy = load_feat_directories.allnoised_npy
-allnoised_npy_test = load_feat_directories.allnoised_npy_test
-
-home_noised_npy = load_feat_directories.homenoised_npy
-home_noised_npy_test = load_feat_directories.homenoised_npy_test
-
 for index in range(0, 5):
     #x = os.path.exists(all_noised_npy[index])
     #y = os.path.exists(home_noised_npy[index])
@@ -142,7 +135,7 @@ def comprise_vector(path):
     for fname in os.listdir(path):
         if not fname.endswith('.npy'):
             continue
-
+        print(fname)
         current_vec = np.load(path + fname)
 
         if len(list(vec_to_return)) == 0:
@@ -154,7 +147,6 @@ def comprise_vector(path):
             break
 
     return vec_to_return
-
 
 def comprise_label(feature_vector, label):
     length = len(list(feature_vector))
