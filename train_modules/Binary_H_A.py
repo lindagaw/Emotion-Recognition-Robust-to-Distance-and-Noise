@@ -144,16 +144,26 @@ def comprise_vector(path):
             continue
 
         current_vec = np.load(path + fname)
-        vec_to_return = np.vstack((vec_to_return, current_vec))
+
+        if len(list(vec_to_return)) == 0:
+            vec_to_return = current_vec
+        else:
+            vec_to_return = np.vstack((vec_to_return, current_vec))
 
     return vec_to_return
 
 
 def comprise_label(feature_vector, label):
     length = len(list(feature_vector))
-    label_vec_to_ret = [label] * length
+    label_vec_to_ret  = np.array([])
+    for i in range(0, length):
+        current = np.array([label])
+        if len(list(label_vec_to_ret)) == 0:
+            label_vec_to_ret = current
+        else:
+            label_vec_to_ret = np.vstack((label_vec_to_ret, current))
 
-    return np.array(label_vec_to_ret)
+    return label_vec_to_ret
 
 
 for index in range(0, 5):
@@ -345,7 +355,7 @@ def predict_cnn(model):
     print('true negative ' + str(tn))
 
 title = 'H_A_neurons_' + str(n_neurons) + '_filters_' + str(nbindex) + '_dropout_' + str(dropout) + '_epoch_' + str(n_epoch)
-
+prefix = '..//..//modules//'
 final_filepath = prefix + str(num_layers) + "_Layer(s)//Final_" + title + ".hdf5"
 
 #model = load_model(final_filepath)
