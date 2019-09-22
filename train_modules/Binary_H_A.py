@@ -203,8 +203,8 @@ for index in [0, 1]:
         else:
             o_feature_vector_home = comprise_vector(path)
             o_label_vector_home = comprise_label(o_feature_vector_home, index)
-'''
-for index in range(0, 5):
+
+for index in [0, 1]:
 
     if not os.path.exists(all_noised_npy_test[index]):
         print(all_noised_npy_test[index] + ' does not exist.')
@@ -245,7 +245,6 @@ for index in range(0, 5):
         else:
             o_feature_vector_home_test = comprise_vector(path)
             o_label_vector_home_test = comprise_label(o_feature_vector_home_test, index)
-'''
 
 # Load training npy files
 featureSet_training = np.vstack((h_feature_vector_all, a_feature_vector_all))
