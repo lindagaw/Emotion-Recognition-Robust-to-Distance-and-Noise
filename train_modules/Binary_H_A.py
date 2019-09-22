@@ -122,48 +122,38 @@ for index in range(0, 5):
     if not os.path.exists(all_noised_npy[index]):
         print(all_noised_npy[index] + ' does not exist. Breaking the loop... ')
         break
-    else:
-        print(all_noised_npy[index] + ' exists. Continuing... ')
 
     if not os.path.exists(home_noised_npy[index]):
         print(home_noised_npy[index] + 'does not exist. Breaking the loop... ')
         break
-    else:
-        print(home_noised_npy[index] + ' exists. Continuing... ')
 
 
 def comprise_vector(path):
-    vec_to_return = np.array([])
+    vec_to_return = []
     for fname in os.listdir(path):
-        if not fname.endswith('.npy'):
-            continue
-
         current_vec = np.load(path + fname)
-        if len(list(vec_to_return)) == 0:
-            vec_to_return = current_vec
-        else:
-            vec_to_return = np.vstack((vec_to_return, current_vec))
-        print(len(list(vec_to_return)))
+        vec_to_return.append(current_vec)
+
+    vec_to_return = np.array(vec_to_return)
     return vec_to_return
 
 def comprise_label(feature_vector, label):
+    label_vec_to_ret = []
     length = len(list(feature_vector))
-    label_vec_to_ret  = np.array([])
-    for i in range(0, length):
-        current = np.array([label])
-        if len(list(label_vec_to_ret)) == 0:
-            label_vec_to_ret = current
-        else:
-            label_vec_to_ret = np.vstack((label_vec_to_ret, current))
-        print(len(list(label_vec_to_ret)))
-    return label_vec_to_ret
+    for index in range(0, length):
+        current_label = [label]
+        label_vec_to_ret.append(current_label)
+    label_vec_to_ret = np.array(label_vec_to_ret)
 
+    print(label_vec_to_ret.shape)
+    return label_vec_to_ret
 
 for index in [0, 1]:
     if not os.path.exists(all_noised_npy[index]):
         print(all_noised_npy[index] + ' does not exist.')
     else:
         path = all_noised_npy[index]
+        print(path)
         if index == 0:
             h_feature_vector_all = comprise_vector(path)
             h_label_vector_all = comprise_label(h_feature_vector_all, index)
@@ -179,7 +169,7 @@ for index in [0, 1]:
         else:
             o_feature_vector_all = comprise_vector(path)
             o_label_vector_all = comprise_label(o_feature_vector_all, index)
-    '''
+
     if not os.path.exists(home_noised_npy[index]):
         print(home_noised_npy[index] + 'does not exist.')
     else:
@@ -199,7 +189,6 @@ for index in [0, 1]:
         else:
             o_feature_vector_home = comprise_vector(path)
             o_label_vector_home = comprise_label(o_feature_vector_home, index)
-    '''
 
 for index in [0, 1]:
 
@@ -223,7 +212,6 @@ for index in [0, 1]:
             o_feature_vector_all_test = comprise_vector(path)
             o_label_vector_all_test = comprise_label(o_feature_vector_all_test, index)
 
-    '''
     if not os.path.exists(home_noised_npy_test[index]):
         print(home_noised_npy_test[index] + 'does not exist.')
     else:
@@ -243,7 +231,7 @@ for index in [0, 1]:
         else:
             o_feature_vector_home_test = comprise_vector(path)
             o_label_vector_home_test = comprise_label(o_feature_vector_home_test, index)
-    '''
+
 
 def float_compatible(input_np):
 
@@ -338,7 +326,7 @@ def train_cnn(prefix):
     X, X_test, Y, Y_test= train_test_split(featureSet, Label, test_size = 0.25, shuffle = True)
     model = create_cnn(title, num_layers, n_neurons, n_batch, nbindex, dropout, classes, dense_layers)
     checkpoint = ModelCheckpoint(checkpoint_filepath, monitor = 'val_acc', verbose = 0, save_best_only = True, mode = 'auto')
-    early_stopping_monitor = EarlyStopping(patience = 100)
+    early_stopping_monitor = EarlyStopping(patience = 1)
     callbacks_list = [checkpoint, early_stopping_monitor]
     model.fit(X, Y, nb_epoch = n_epoch, batch_size = n_batch,  callbacks = callbacks_list, validation_data = (X_test, Y_test), verbose = 1)
     model.save_weights(final_filepath)
@@ -378,10 +366,10 @@ def predict_cnn(model):
     print('true negative ' + str(tn))
 
 title = 'H_A_neurons_' + str(n_neurons) + '_filters_' + str(nbindex) + '_dropout_' + str(dropout) + '_epoch_' + str(n_epoch)
-
+title = 'test'
 prefix = '..//..//modules//'
 final_filepath = prefix + str(num_layers) + "_Layer(s)//Final_" + title + ".hdf5"
 
-#model = load_model(final_filepath)
-#model = train_cnn('..//..//modules//')
-#predict_cnn(model)
+model = load_model(final_filepath)
+model = train_cnn('..//..//modules//')
+predict_cnn(model)
