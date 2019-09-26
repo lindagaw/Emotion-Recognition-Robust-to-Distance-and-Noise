@@ -1,22 +1,26 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 
 category_names = ['error rate', 'accuracy']
 results = {'Happy': [0.0030, 0.9970], 'Angry': [0.0031, 0.9969], 'Neutral': [0.0, 1.0], 'Sad': [0.0, 1.0]
            }
 graph_title = 'my_graph_title'
 
+def draw_scatter(h, a, n, s, title):
+    happy_x, happy_y = h
+    angry_x, angry_y = a
+    neutral_x, neutral_y = n
+    sad_x, sad_y = s
+    
+    sns.set(style="whitegrid")
+    sns.residplot(happy_x, happy_y, color="g").set_title(title)
+    sns.residplot(angry_x, angry_y, color="r").set_ylabel('score on the correct class')
+    sns.residplot(neutral_x, neutral_y, color="y").set_xlabel('deamplified amount measured in decibels')
+    sns.residplot(sad_x, sad_y, color="b")
+
 def draw(results, category_names, graph_title):
-    """
-    Parameters
-    ----------
-    results : dict
-        A mapping from question labels to a list of answers per category.
-        It is assumed all lists contain the same number of entries and that
-        it matches the length of *category_names*.
-    category_names : list of str
-        The category labels.
-    """
     labels = list(results.keys())
     data = np.array(list(results.values()))
     data_cum = data.cumsum(axis=1)
