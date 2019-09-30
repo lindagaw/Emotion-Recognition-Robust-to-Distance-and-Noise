@@ -3,31 +3,95 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-def histogram(h, a, n, s, x_description, title):
+def one_emotion_four_reverb_factors(emotion_x, acc):
+    x_measurement = [2, 4, 6, 8]
+   
+    emotion_x, acc = sort_pair_ascending_xs(list(emotion_x), list(acc))
+    two_acc = []
+    four_acc = []
+    six_acc = []
+    eight_acc = []
+    
+    for index in range(0, len(emotion_x)):
+        if emotion_x[index] == 2:
+            two_acc.append(acc[index])
+        elif emotion_x[index] == 4:
+            four_acc.append(acc[index])
+        elif emotion_x[index] == 6:
+            six_acc.append(acc[index])
+        elif emotion_x[index] == 8:
+            eight_acc.append(acc[index])
+    
+    return two_acc, four_acc, six_acc, eight_acc
+
+
+def draw_scatter_reverb_factors(h, a, n, s, title, xlabel, ylabel):
+    happy_x, happy_y = sort_pair_ascending_xs(h[0], h[1])
+    angry_x, angry_y = sort_pair_ascending_xs(a[0], a[1])
+    neutral_x, neutral_y = sort_pair_ascending_xs(n[0], n[1])
+    sad_x, sad_y = sort_pair_ascending_xs(s[0], s[1])
+    
+    for element in range(0, len(happy_x)): elements += 0.01
+    for element in range(0, len(angry_x)): elements += 0.01
+    for element in range(0, len(neutral_x)): elements += 0.01
+    for element in range(0, len(sad_x)): elements += 0.01
+
+    fig, ax = plt.subplots()
+    scale = 30
+    
+    ax.set_title(title, y=-0.4)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    
+    ax.scatter(happy_x, happy_y, c='green', s=scale, label='Happy', alpha=0.6, edgecolors='none')
+    ax.scatter(angry_x, angry_y, c='red', s=scale, label='Angry', alpha=0.6, edgecolors='none')
+    ax.scatter(neutral_x, neutral_y, c='yellow', s=scale, label='Neutral', alpha=0.6, edgecolors='none')
+    ax.scatter(sad_x, sad_y, c='blue', s=scale, label='Sad', alpha=0.6, edgecolors='none')
+    ax.legend()
+    ax.grid(True)
+
+    plt.show()
+    
+
+def histogram(h, a, n, s, title, xlabel, ylabel):
     
     x_measurement = [2, 4, 6, 8]
     
+    labels = ['2', '4', '6', '8']
+
     h_x, h_acc = sort_pair_ascending_xs(h[0], h[1])
+    two_acc_h, four_acc_h, six_acc_h, eight_acc_h = one_emotion_four_reverb_factors(h_x, h_acc)
+    h_means = [np.mean(two_acc_h), np.mean(four_acc_h), np.mean(six_acc_h), np.mean(eight_acc_h)]
+    
     a_x, a_acc = sort_pair_ascending_xs(a[0], a[1])
+    two_acc_a, four_acc_a, six_acc_a, eight_acc_a = one_emotion_four_reverb_factors(a_x, a_acc)
+    a_means = [np.mean(two_acc_a), np.mean(four_acc_a), np.mean(six_acc_a), np.mean(eight_acc_a)]
+    
     n_x, n_acc = sort_pair_ascending_xs(n[0], n[1])
+    two_acc_n, four_acc_n, six_acc_n, eight_acc_n = one_emotion_four_reverb_factors(n_x, n_acc)
+    n_means = [np.mean(two_acc_n), np.mean(four_acc_n), np.mean(six_acc_n), np.mean(eight_acc_n)]
+    
     s_x, s_acc = sort_pair_ascending_xs(s[0], s[1])
+    two_acc_s, four_acc_s, six_acc_s, eight_acc_s = one_emotion_four_reverb_factors(s_x, s_acc)
+    s_means = [np.mean(two_acc_s), np.mean(four_acc_s), np.mean(six_acc_s), np.mean(eight_acc_s)]
     
     x = np.arange(len(x_measurement))  # the label locations
+    
     width = 0.2  # the width of the bars
     fig, ax = plt.subplots()
     
-    rect1 = ax.bar(x - 2 * width, h_acc, width, label='Accuracy on Happy', color='#8dff33')
-    rect2 = ax.bar(x - width, a_acc, width, label='Accuracy on Angry', color='#ff5733')
-    rect3 = ax.bar(x, n_acc, width, label='Accuracy on Neutral', color='#ffd133')
-    rect4 = ax.bar(x + width, s_acc, width, label='Accuracy on Sad', color='#3374ff')
+    rect1 = ax.bar(x - 2 * width, h_means, width, label='Happy', color='#8dff33')
+    rect2 = ax.bar(x - width, a_means, width, label='Angry', color='#ff5733')
+    rect3 = ax.bar(x, n_means, width, label='Neutral', color='#ffd133')
+    rect4 = ax.bar(x + width, s_means, width, label='Sad', color='#3374ff')
     
     # Add some text for labels, title and custom x-axis tick labels, etc.
+    ax.set_ylabel(ylabel)
     ax.set_title(title, y=-0.4)
-    ax.set_ylabel('Accuracy')
-    ax.set_title('Scores by group and gender')
     ax.set_xticks(x)
-    ax.set_xticklabels(x_description)
+    ax.set_xticklabels(labels)
     ax.legend()
+
 
 def sort_pair_ascending_xs(xs, ys):
     li = []
