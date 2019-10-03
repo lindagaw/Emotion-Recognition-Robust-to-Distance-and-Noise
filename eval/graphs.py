@@ -115,7 +115,7 @@ def draw_scatter(h, a, n, s, title, xlabel, ylabel):
     sad_x, sad_y = sort_pair_ascending_xs(s[0], s[1])
 
     fig, ax = plt.subplots()
-    scale = 30
+    scale = 10
     
     ax.set_title(title, y=-0.4)
     ax.set_xlabel(xlabel)
