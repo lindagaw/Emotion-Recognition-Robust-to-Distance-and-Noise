@@ -295,7 +295,9 @@ def extract_feats_single_wav(npy_path, audiofile):
     audio_npy = (audiofile[:len(audiofile)-4] + '.npy').split('//')[len((audiofile[:len(audiofile)-4] + '.npy').split('//'))-1]
     audio_npy = npy_path + audio_npy
     All = float_compatible(All)
-    np.save(audio_npy, All)
+    if str(All.shape) == '(48, 272)':
+        np.save(audio_npy, All)
+        print('saved')
     return All
 
 
@@ -329,9 +331,9 @@ homenoised = [homenoised_happy, homenoised_angry, homenoised_neutral, homenoised
 homenoised_npy = [homenoised_happy_npy, homenoised_angry_npy,
                   homenoised_neutral_npy, homenoised_sad_npy, homenoised_other_npy]
 
-
 # index 0 - happy, index 1 - angry, index 2 - neutral, index 3 - sad, index 4 - other
-for index in range(0, 5):
+'''
+for index in [4]:
     for audio in os.listdir(allnoised[index]):
         print(audio)
         print(allnoised[index])
@@ -345,19 +347,19 @@ for index in range(0, 5):
             continue
         else:
             audio = allnoised[index] + audio
-            #extract_feats_single_wav(allnoised_npy[index], audio)
-        break
+            extract_feats_single_wav(allnoised_npy[index], audio)
 '''
-for index in range(0, 5):
+for index in [4]:
     for audio in os.listdir(homenoised[index]):
         npy_title = homenoised_npy[index] + audio[:len(audio)-4] + '.npy'
-        if os.path.isfile(npy_title):
-            print(npy_title + 'already exists. Skipping...')
-            continue
-        elif not audio.endswith('.wav') or audio[0] == '.':
-            continue
-        else:
-            audio = homenoised[index] + audio
-            #extract_feats_single_wav(homenoised_npy[index], audio)
-        break
-'''
+        try:
+            if os.path.isfile(npy_title):
+                print(npy_title + 'already exists. Skipping...')
+                continue
+            elif not audio.endswith('.wav') or audio[0] == '.':
+                continue
+            else:
+                audio = homenoised[index] + audio
+                extract_feats_single_wav(homenoised_npy[index], audio)
+        except:
+            pass
