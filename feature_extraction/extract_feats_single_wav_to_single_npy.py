@@ -349,9 +349,22 @@ emodb_Other_npy = 'D://Datasets//EMO-DB//wav//npy//Other//'
 emodb = [emodb_Happy, emodb_Angry, emodb_Neutral, emodb_Sad, emodb_Other]
 emodb_npy = [emodb_Happy_npy, emodb_Angry_npy, emodb_Neutral_npy, emodb_Sad_npy, emodb_Other_npy]
 
-for index in [0, 1, 2, 3, 4]:
-    for audio in os.listdir(emodb[index]):
-        npy_title = emodb_npy[index] + audio[:len(audio)-4] + '.npy'
+CaFE_happy = '//Users//yegao//Desktop//CaFE//Happy (Joie)//'
+CaFE_angry = '//Users//yegao//Desktop//CaFE//Angry (Colere)//'
+CaFE_neutral = '//Users//yegao//Desktop//CaFE//Neutral (Neutre)//'
+CaFE_sad = '//Users//yegao//Desktop//CaFE//Sad (Tristesse)//'
+
+CaFE_happy_npy = '//Users//yegao//Desktop//CaFE//npy//Happy//'
+CaFE_angry_npy = '//Users//yegao//Desktop//CaFE//npy//Angry//'
+CaFE_neutral_npy = '//Users//yegao//Desktop//CaFE//npy//Neutral//'
+CaFE_sad_npy = '//Users//yegao//Desktop//CaFE//npy//Sad//'
+
+CaFE = [CaFE_happy, CaFE_angry, CaFE_neutral, CaFE_sad]
+CaFE_npy = [CaFE_happy_npy, CaFE_angry_npy, CaFE_neutral_npy, CaFE_sad_npy]
+
+for index in [0, 1, 2, 3]:
+    for audio in os.listdir(CaFE[index]):
+        npy_title = CaFE_npy[index] + audio[:len(audio)-4] + '.npy'
         try:
             if os.path.isfile(npy_title):
                 print(npy_title + 'already exists. Skipping...')
@@ -359,10 +372,11 @@ for index in [0, 1, 2, 3, 4]:
             elif not audio.endswith('.wav') or audio[0] == '.':
                 continue
             else:
-                audio = emodb[index] + audio
-                extract_feats_single_wav(emodb_npy[index], audio)
-        except:
-            pass
+                audio = CaFE[index] + audio
+                extract_feats_single_wav(CaFE_npy[index], audio)
+                print(npy_title + ' created.')
+        except Exception as e:
+            print(e)
 
 '''
 for index in [4]:
