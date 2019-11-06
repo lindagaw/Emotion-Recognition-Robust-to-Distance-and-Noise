@@ -295,9 +295,11 @@ def extract_feats_single_wav(npy_path, audiofile):
     audio_npy = (audiofile[:len(audiofile)-4] + '.npy').split('//')[len((audiofile[:len(audiofile)-4] + '.npy').split('//'))-1]
     audio_npy = npy_path + audio_npy
     All = float_compatible(All)
+    '''
     if str(All.shape) == '(48, 272)':
         np.save(audio_npy, All)
         print('saved')
+    '''
     return All
 
 
@@ -362,6 +364,26 @@ CaFE_sad_npy = 'D://Datasets//CaFE//npy//Sad//'
 CaFE = [CaFE_happy, CaFE_angry, CaFE_neutral, CaFE_sad]
 CaFE_npy = [CaFE_happy_npy, CaFE_angry_npy, CaFE_neutral_npy, CaFE_sad_npy]
 
+elapsed = []
+for index in [0, 1, 2, 3, 4]:
+    for audio in os.listdir(homenoised[index]):
+        npy_title = homenoised_npy[index] + audio[:len(audio)-4] + '.npy'
+        try:
+            if os.path.isfile(npy_title):
+                print(npy_title + 'already exists. Skipping...')
+                continue
+            elif not audio.endswith('.wav') or audio[0] == '.':
+                continue
+            else:
+                audio = homenoised[index] + audio
+                start = time.time()
+                extract_feats_single_wav(homenoised_npy[index], audio)
+                end = time.time()
+                elapsed.append(end-start)
+        except Exception as e:
+            print(e)
+
+'''
 for index in [0, 1, 2, 3]:
     for audio in os.listdir(emodb[index]):
         npy_title = emodb_npy[index] + audio[:len(audio)-4] + '.npy'
@@ -377,7 +399,7 @@ for index in [0, 1, 2, 3]:
                 print(npy_title + ' created.')
         except Exception as e:
             print(e)
-
+'''
 '''
 for index in [4]:
     for audio in os.listdir(allnoised[index]):
@@ -394,6 +416,7 @@ for index in [4]:
         else:
             audio = allnoised[index] + audio
             extract_feats_single_wav(allnoised_npy[index], audio)
+            
 for index in [4]:
     for audio in os.listdir(homenoised[index]):
         npy_title = homenoised_npy[index] + audio[:len(audio)-4] + '.npy'
