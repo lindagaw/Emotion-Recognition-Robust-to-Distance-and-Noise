@@ -1,12 +1,12 @@
 
 # config = 0 ==> CS servers, config = 1 ==> DESK038, config = 2 ==> MACBOOK, config = 3 ==> Rivanna
 
-config = 2
+config = 1
 
 if config == 0:                                 # CS Server
     prefix = '..//..//..//Datasets//'
 elif config == 1:                               # DESKTOP 038
-    prefix = 'D://Datasets//TRAINING//'
+    prefix = 'C://Users//yg9ca//Documents//Datasets//'
 elif config == 2:                               # MACBOOK
     prefix = '//Users//yegao//Documents//Datasets//'
 else:                                           # Rivanna
