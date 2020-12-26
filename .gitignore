@@ -1,3 +1,5 @@
 *.npy
 *.wav
 *.hdf5
+.ipynb_checkpoints
+ood_detection/.ipynb_checkpoints
