@@ -51,7 +51,7 @@ def eval(model, model_description):
     y_trues = [np.argmax(val) for val in y_test]
 
     acc = accuracy_score(y_trues, y_preds)
-    f1 = f1_score(y_trues, y_preds, average='weighted')
+    f1 = f1_score(y_trues, y_preds, average='micro')
 
     print(acc)
     print(f1)
